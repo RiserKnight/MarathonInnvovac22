@@ -54,7 +54,6 @@ module.exports = (sequelize, DataTypes) => {
           notEmpty:{msg:'TimeStamp must not be empty'}
         }
       },
-      timeValue:DataTypes.INTEGER,
      fPoint: {
       type:DataTypes.INTEGER,
       allowNull:false,
