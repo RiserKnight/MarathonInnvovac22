@@ -123,6 +123,37 @@ exports.getAllStage1Q=async()=>{
                 }
 }
 
+exports.getStage2Q=async(qID)=>{
+    var toR={};
+    try{
+        const question=await Stage2.findOne({
+            where:{qID:qID}
+        });
+    
+        console.log(question.dataValues);
+        toR=question.dataValues;
+        return toR;
+    } 
+          catch(err){
+            console.log(err);
+                }
+    
+}
+
+exports.getAllStage2Q=async()=>{
+    try{
+        const questions=await Stage2.findAll();
+    
+        questions.forEach((question)=>{
+            console.log(question.dataValues);
+        });
+        return questions;
+        } 
+          catch(err){
+            console.log(err);
+                }
+}
+
 //**********************************Check Operations **********************************
 
 

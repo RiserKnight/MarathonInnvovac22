@@ -16,7 +16,7 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-const randQ="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s";
+const randQ="Lorem Ipsum has been the industry's standard dummy text ever since the 1500s";
 let stage1Qlist;
 
 app.get("/",(req,res)=>{
@@ -24,7 +24,8 @@ res.render("home");
 });
 
 
-app.get("/stage1",(req,res)=>{
+app.get("/stage1",async(req,res)=>{
+  stage1Qlist = await qFunct.stage1Qlist();
   res.render("Stage1/stage");
   });
 
@@ -51,7 +52,8 @@ app.get("/stage1/ques",async(req,res)=>{
 });
 
 app.get("/stage2",(req,res)=>{
-res.render("Stage2/stage");
+  qFunct.stage2Qlist();
+  res.render("Stage2/stage");
 });
 
 app.get("/stage2/ques",(req,res)=>{
@@ -62,12 +64,13 @@ app.listen(3000,async()=> {
     console.log("Server started on port 3000.");
     await sequelize.authenticate();
     console.log("db connected");
-    stage1Qlist = await qFunct.stage1Qlist();
+    
    // dbFunct.storeUser(10001,"Yum hai hum",0,1);
-   /*
-   for(a=1;a<10;a++){
-     dbFunct.storeStage1Q(1000+a,randQ,"Answer")
-   }
-    */
-  });
+   
+   //for(a=1;a<31;a++){
+    // dbFunct.storeStage2Q(2000+a,randQ,"option1","option2","option3","option4","Answer");
+   //  dbFunct.delStage1Q(2000+a); 
+ // }
+  
+});
   
