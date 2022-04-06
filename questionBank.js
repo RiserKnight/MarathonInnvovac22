@@ -1,6 +1,6 @@
 const dbFunct = require(__dirname+"/database.js");
-const stage1Qlist=[1];
-var stage2Qlist=[1];
+let stage1Qlist=[1];
+let stage2Qlist=[1];
 
 exports.stage1Qlist=async()=>{
     try{
@@ -22,25 +22,19 @@ exports.stage2Qlist=async()=>{
     questions.forEach((question)=>{
         stage2Qlist.push(question.dataValues.qID);
     });
-    const len = stage2Qlist.length-1;
-    console.log("Length: "+len);
-    for(a=0;a<10;a++){
-    let x=Math.floor(Math.random() * len);
-    let y=Math.floor(Math.random() * len);
-    x=x+1;
-    y=y+1;
-    var b = stage2Qlist[y];
-    stage2Qlist[y] = stage2Qlist[x];
+   
+    let len = stage2Qlist.length-1;
+      
+    while(len!=0){
+    const x=Math.floor(Math.random() * len)+1;    
+    let b = stage2Qlist[len];
+    stage2Qlist[len] = stage2Qlist[x];
     stage2Qlist[x] = b;
+    len--;    
     }
-    /*
     stage2Qlist=stage2Qlist.slice(0,11);
-    stage2Qlist.forEach((item)=>{
-     console.log(item);
-    })*/
 
-    
-  //  return stage1Qlist;
+    return stage2Qlist;
  }catch (err) {
         console.log(err);
     }

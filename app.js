@@ -17,7 +17,7 @@ app.use(bodyParser.urlencoded({
 }));
 
 const randQ="Lorem Ipsum has been the industry's standard dummy text ever since the 1500s";
-let stage1Qlist;
+let stage1Qlist=[1],stage2Qlist=[1];
 
 app.get("/",(req,res)=>{
 res.render("home");
@@ -36,7 +36,7 @@ app.get("/stage1/ques",async(req,res)=>{
     res.render("Stage1/end")
   }
   else{
-  res.render("Stage1/stageQue",{question: question.question,qID: question.qID});
+  res.render("Stage1/stageQue",{sno:stage1Qlist[0],question: question.question,qID: question.qID});
   }
   });
 
@@ -44,21 +44,36 @@ app.get("/stage1/ques",async(req,res)=>{
     console.log("Submit Answer: "+req.body.answer);
     stage1Qlist[0]=stage1Qlist[0]+1;
    const result=await dbFunct.checkStage1Q(req.params.qID,req.body.answer);
-   const x=0; 
+   let x=0; 
    if(result){x=10;}
    dbFunct.storeSubmission(req.params.qID,0,10001,timeFunct.timeStamp(),x,1)
     res.redirect("/stage1/ques");
   
 });
 
-app.get("/stage2",(req,res)=>{
-  qFunct.stage2Qlist();
+app.get("/stage2",async(req,res)=>{
+  stage2Qlist = await qFunct.stage2Qlist();
   res.render("Stage2/stage");
+  });
+
+app.get("/stage2/ques",async(req,res)=>{
+  const index= stage2Qlist[0];
+  const question = await dbFunct.getStage2Q(stage2Qlist[index]);
+  if(index===stage2Qlist.length-1){
+    res.render("Stage1/end")
+  }
+  else{
+  res.render("Stage2/stageQue",{question: question.question,qID: question.qID});
+  }
 });
 
-app.get("/stage2/ques",(req,res)=>{
-  res.render("Stage2/stageQue");
-  });
+app.post("/stage2/ques/submit/:qID",async(req,res)=>{
+console.log(req.body.user_ans);
+stage1Qlist[0]=stage1Qlist[0]+1;
+const result=await dbFunct.checkStage2Q(req.params.qID,req.body.user_ans);
+console.log(result);
+res.redirect("/stage2/ques");
+});
 
 app.listen(3000,async()=> {
     console.log("Server started on port 3000.");

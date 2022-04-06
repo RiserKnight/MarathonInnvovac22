@@ -24,32 +24,36 @@
             </div>
         </section>
         <!-- Wait Box -->
-        <div class="wait_box">
-            <div class="wait_title">Wait</div>
-            <div class="timer">
-                <div class="time_left_txt">Time Left</div>
-                <div class="timer_sec">20</div>
-            </div>
-        </div>  
-
-        <!-- Result Box -->
-       <div class="result_box">
-          <div class="icon">
-              <i class="fas fa-crown"></i>
-          </div>
-               <div class="complete_text">You've completed the Quiz!</div>
-               <div class="score_text">
-               <!-- Here I've inserted Score Result from JavaScript -->
-          </div>
-          <div class="buttons">
-               <a href="/"><button class="quit">Quit Quiz</button></a>
-          </div>
-      </div>
+       
         <!-- footer of Quiz Box -->
         <footer>
             <div class="total_que">
-                <span>1 of 5 Questions</span>
+                <span><%=sno%> of 12 Questions</span>
             </div>
         </footer>
     </div>
+    <div class="wait_box">
+        <div class="wait_title">Wait</div>
+        <div class="timer">
+            <div class="time_left_txt">Time Left</div>
+            <div class="timer_sec">20</div>
+        </div>
+        <div class="icon">
+            <i class="fas fa-crown"></i>
+        </div>
+    </div>  
+
+    <!-- Result Box -->
+   <div class="result_box">
+      <div class="icon">
+          <i class="fas fa-crown"></i>
+      </div>
+           <div class="complete_text">You've completed the Quiz!</div>
+           <div class="score_text">
+           <!-- Here I've inserted Score Result from JavaScript -->
+      </div>
+      <div class="buttons">
+           <a href="/"><button class="quit">Quit Quiz</button></a>
+      </div>
+  </div>
     <%- include('partials/footer') %>

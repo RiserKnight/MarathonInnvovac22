@@ -170,3 +170,17 @@ exports.checkStage1Q=async(qID,answer)=>{
                 }
    
 }
+
+exports.checkStage2Q=async(qID,answer)=>{
+    try{
+        const question=await Stage2.findOne({
+            where:{qID:qID}
+        });
+        const res = Boolean(answer==question.answer);
+        return res;
+        } 
+          catch(err){
+            console.log(err);
+                }
+   
+}

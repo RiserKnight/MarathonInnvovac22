@@ -1,7 +1,7 @@
 <%- include('partials/header') %>
 
-    <!-- Quiz Box -->
-  <div class="quiz_box">
+<!-- Quiz Box -->
+<div class="quiz_box">
     <header>
         <div class="title">Question</div>
         <div class="timer">
@@ -10,45 +10,30 @@
         </div>
         <div class="time_line"></div>
     </header>
+    <form action="/stage2/ques/submit/<%=qID%>" id="stage2ques"  method="post">
     <section>
         <div class="que_text">
+            <span><%=question%><br><%=qID%></</span>
             <!-- Here I've inserted question from JavaScript -->
         </div>
         <div class="option_list">
+            <div class="option" id="option1"><span>Hyper Text Preprocessor</span></div>
+            <div class="option" id="option2"><span>Hyper Text Markup Language</span></div>
+            <div class="option" id="option3"><span>Hyper Text Multiple Language</span></div>
+            <div class="option" id="option4"><span>Hyper Tool Multi Language</span></div>
             <!-- Here I've inserted options from JavaScript -->
         </div>
     </section>
 
     <!-- footer of Quiz Box -->
     <footer>
+        <input type="text" name="user_ans" id="user_ans">
         <div class="total_que">
             <!-- Here I've inserted Question Count Number from JavaScript -->
         </div>
-        <button class="next_btn">Next</button>
+        <button type="submit" class="next_btn" id="nextBtn">Next Que</button>
     </footer>
+    </form>
 </div>
 
-<!-- Result Box -->
-<div class="result_box">
-    <div class="icon">
-        <i class="fas fa-crown"></i>
-    </div>
-    <div class="complete_text">You've completed the Quiz!</div>
-    <div class="score_text">
-        <!-- Here I've inserted Score Result from JavaScript -->
-    </div>
-    <div class="buttons">
-       <a href="/"><button class="quit">Quit Quiz</button></a>
-    </div>
-</div>
-
-
-    <!-- Inside this JavaScript file I've inserted Questions and Options only -->
-    <script src="/stage2Res/question.js"></script>
-
-    <!-- Inside this JavaScript file I've coded all Quiz Codes -->
-    <script src="/stage2Res/script1.js"></script>
-
-</body>
-</html>
-</html>
+<%- include('partials/footer') %>

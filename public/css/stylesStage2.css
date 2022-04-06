@@ -1,4 +1,4 @@
-
+/* importing google fonts */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
 *{
     margin: 1px;
@@ -217,10 +217,16 @@ section .option_list .option:hover{
     border: 1px solid #b8daff;
 }
 
-section .option_list .option.selected{
+section .option_list .option.correct{
     color: black;
     background: #f5f7a5;
     border: 1px solid #c3e6cb;
+}
+
+section .option_list .option.incorrect{
+    color:black ;
+    background:#f5f7a5;
+    border: 1px solid #f5c6cb;
 }
 
 section .option_list .option.disabled{
@@ -238,6 +244,17 @@ section .option_list .option .icon{
     transition: all 0.3s ease;
     line-height: 24px;
 }
+/*.option_list .option .icon.tick{
+    color: #23903c;
+    border-color: #23903c;
+    background: #d4edda;
+}
+
+.option_list .option .icon.cross{
+    color: #a42834;
+    background: #f8d7da;
+    border-color: #a42834;
+}*/
 
 footer{
     height: 60px;
@@ -290,7 +307,9 @@ footer button.show{
     pointer-events: auto;
     transform: scale(1);
 }
-
+#user_ans{
+    display: none;
+}
 .result_box{
     background: #fff;
     border-radius: 5px;
