@@ -1,0 +1,81 @@
+body{
+  font-family: 'Lato', sans-serif;
+  position: relative;
+  background: #3DA6D4;
+  margin: 0px;
+   }
+   #background-video {
+    height: 100vh;
+    width: 100vw;
+    object-fit: cover;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: -1;
+  }
+  .main-section{
+  width: 460px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  }
+  .content-section{
+  background-image: linear-gradient(rgb(168, 65, 174),rgb(88, 170, 182));
+  border-radius: 10px solid;
+  border-color: black;
+  
+  }
+  .head-section{
+  background-image: linear-gradient(rgb(168, 65, 174),rgb(88, 170, 182)) ;
+  text-align: center;
+  padding: 15px 0px;
+  border-bottom: 1px solid #CECECE;
+  }
+  .head-section h3{
+  margin: 0px;
+  color:white;
+   font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-weight: bolder;
+  font-style: italic;
+  text-decoration: wavy;
+  font-size: 27px;
+ }
+  .body-section{
+  padding:15px 30px 30px 30px;
+  overflow: hidden;
+  }
+  .body-section .form-input{
+  width: 100%;
+  padding: 15px 0px;
+ 
+  }
+  .body-section .form-input input[type='text']{
+  width: calc(100% - 30px);
+  background-color:  rgb(203, 223, 229);
+  border-radius: 5px;
+  padding:10px 10px;
+  border-color: rgb(211, 50, 200);
+  }
+  .body-section .form-input input[type='checkbox']{
+  float: left;
+  }
+  .body-section label{
+  color: #565656;
+  padding: 1px 5px;
+  float: left;
+  }
+  .body-section .btn-submit{
+  float: right;
+  background: #0d0e0e;
+  border:1px solid #B5CBCD;
+  color: white;
+  font-weight: bold;
+  padding:7px 20px;
+  border-radius: 15px;
+  }
+  .body-section .btn-submit:hover{
+    background-color: rgb(54, 196, 29);
+  }
