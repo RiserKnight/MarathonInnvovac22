@@ -63,13 +63,14 @@ app.get("/stage2/ques",async(req,res)=>{
     res.render("Stage1/end")
   }
   else{
-  res.render("Stage2/stageQue",{question: question.question,qID: question.qID});
+  res.render("Stage2/stageQue",{question: question.question,qID: question.qID,
+    option1: question.option1,option2: question.option2,option3: question.option3,option4: question.option4});
   }
 });
 
 app.post("/stage2/ques/submit/:qID",async(req,res)=>{
 console.log(req.body.user_ans);
-stage1Qlist[0]=stage1Qlist[0]+1;
+stage2Qlist[0]=stage2Qlist[0]+1;
 const result=await dbFunct.checkStage2Q(req.params.qID,req.body.user_ans);
 console.log(result);
 res.redirect("/stage2/ques");
@@ -91,6 +92,6 @@ app.listen(3000,async()=> {
     // dbFunct.storeStage2Q(2000+a,randQ,"option1","option2","option3","option4","Answer");
    //  dbFunct.delStage1Q(2000+a); 
  // }
-  
+    
 });
   
