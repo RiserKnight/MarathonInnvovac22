@@ -11,8 +11,9 @@ const path = require('path');
 const formidable=require("formidable");
 const fs=require("fs");
 const { prependOnceListener } = require("process");
-var cookieParser = require('cookie-parser');
-var session = require('express-session');
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
+require('dotenv').config();
 
 const date = new Date();
 
@@ -30,7 +31,7 @@ app.use(cookieParser());
 // initialize express-session to allow us track the logged-in user across sessions.
 app.use(session({
     key: 'user_sid',
-    secret: 'somerandonstuffs',
+    secret: process.env.SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -47,7 +48,7 @@ app.use((req, res, next) => {
   next();
 });
 
-var userContent = {userID: 205121002,userName: 'Aayush Gupta',userEmail:'205121002@nitt.edu', status: false}; 
+var userContent = {userID: 0,userName: ' ',userEmail:' ', status: false};
 
 // middleware function to check for logged-in users
 var sessionChecker = (req, res, next) => {
@@ -76,6 +77,7 @@ const Stage1upT=1650389100000;
 const Stage1dwT=1650389220000;
 const Stage2upT=1650389100000;
 const Stage2dwT=1650389220000;
+const stage3Ques={q1:"false",q2:"false",q3:"false",q4:"false"};
 
 app.get('/', sessionChecker, (req, res) => {
   res.redirect("/login");
@@ -211,9 +213,17 @@ app.get('/logout', (req, res) => {
   }
 });
 
-
+//File comparison
 
 const folder='./uploads';
+
+const output2="9924542";
+
+const output1="57334278020"; 
+
+const output3="19831478";
+
+const output4="YESYESNO";
 
 if(!fs.existsSync(folder))
 {
@@ -233,17 +243,47 @@ var upload = multer({ storage: storage });
 var uploadMultiple = upload.fields([{ name: 'file1', maxCount: 1 }, { name: 'file2', maxCount: 2 }])
 
 
-app.post('/uploadfile', uploadMultiple, function (req, res, next) {
- 
+app.post('/uploadfile/:qID', uploadMultiple, function (req, res, next) {
+  const qID=parseInt(req.params.qID);
   if(req.files){
     var v= req.files.file2[0].path;
         console.log(req.files);
         console.log(v+ 'file uploaded successfully'); 
     fs.readFile(v,function(err,data){
-      if(err){
-        console.log(err);
-      }
-      console.log(data.toString());
+      data=data.toString();
+      var data1=data.replace(/(\r\n|\n|\r)/gm,"");
+      let score=0;
+      switch (qID) {
+        case 0:
+          stage3Ques.q1=true;
+          if(output1==data1){
+            score=10;
+         }
+          break;
+        case 1:
+          stage3Ques.q2=true;
+          if(output2==data1){
+            score=10;
+         }
+          break;
+        case 2:
+          stage3Ques.q3=true;
+          if(output3==data1){
+            score=10;
+         }
+          break;
+        case 3:
+          stage3Ques.q4=true;
+          if(output4==data1){
+            score=10;
+         }
+          break;
+          default:
+            console.log("Bekar");
+            break;
+        }    
+    console.log(score);
+    res.redirect("/stage3/que");
     })  
     }
   });
@@ -252,7 +292,7 @@ app.post('/uploadfile', uploadMultiple, function (req, res, next) {
     res.sendFile(__dirname+"/views/Stage3/index1.html");
   });
   app.get("/stage3/que",(req,res)=>{
-    res.sendFile(__dirname+"/views/Stage3/index2.html");
+    res.render("Stage3/index2",stage3Ques);
   });
 
 // route for handling 404 requests(unavailable routes)

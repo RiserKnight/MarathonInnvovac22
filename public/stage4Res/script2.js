@@ -2,36 +2,81 @@ const ques1_btn = document.querySelector(".section1 .ques1_btn ");
 const ques2_btn = document.querySelector(".section1 .ques2_btn ");
 const ques3_btn = document.querySelector(".section1 .ques3_btn");
 const ques4_btn = document.querySelector(".section1 .ques4_btn");
+const question_section=document.getElementById("ques_section");
+const question_upload=document.getElementById("ques_upload");
+const question_head=document.getElementById("ques_head");
+const queStat1 = document.getElementById("quetion1_status").innerHTML;
+const queStat2 = document.getElementById("quetion2_status").innerHTML;
+const queStat3 = document.getElementById("quetion3_status").innerHTML;
+const queStat4 = document.getElementById("quetion4_status").innerHTML;
 
 let ques_count=0;
 
 window.onload=()=>{
-    ques_count=0;
-    showQuestions(ques_count);
-    showbutton(ques_count);
+    
 }
 ques1_btn.onclick = ()=>{
     ques_count=0;
-    showQuestions(ques_count);
-    showbutton(ques_count);
+    if(queStat1=='false'){
+        question_head.innerHTML="Question";
+        question_section.style.display="block";
+        question_upload.style.display="block";
+        showQuestions(ques_count);
+        showbutton(ques_count);
+    }
+    else{
+       question_head.innerHTML="Submitted";
+       question_section.style.display="none";
+       question_upload.style.display="none";
+    }
 }
 
 ques2_btn.onclick = ()=>{
     ques_count=1;
-    showQuestions(ques_count);
-    showbutton(ques_count);
+    if(queStat2=='false'){
+        question_head.innerHTML="Question";
+        question_section.style.display="block";
+        question_upload.style.display="block";
+        showQuestions(ques_count);
+        showbutton(ques_count);
+    }
+    else{
+        question_head.innerHTML="Submitted";
+        question_section.style.display="none";
+        question_upload.style.display="none";
+     }
 }
 
 ques3_btn.onclick = ()=>{
     ques_count=2;
-    showQuestions(ques_count);
-    showbutton(ques_count);
+    if(queStat3=='false'){
+        question_head.innerHTML="Question";
+        question_section.style.display="block";
+        question_upload.style.display="block";
+        showQuestions(ques_count);
+        showbutton(ques_count);
+    }
+    else{
+        question_head.innerHTML="Submitted";
+        question_section.style.display="none";
+        question_upload.style.display="none";
+     }
 }
 
 ques4_btn.onclick = ()=>{
     ques_count=3;
-    showQuestions(ques_count);
-    showbutton(ques_count);
+    if(queStat4=='false'){
+        question_head.innerHTML="Question";
+        question_section.style.display="block";
+        question_upload.style.display="block";
+        showQuestions(ques_count);
+        showbutton(ques_count);
+    }
+    else{
+        question_head.innerHTML="Submitted";
+        question_section.style.display="none";
+        question_upload.style.display="none";
+     }
 }
 
 function showQuestions(index){
@@ -67,8 +112,9 @@ function showQuestions(index){
 
 function showbutton(index){
     var upload= document.querySelector(".upload");
-     
-    let upload_btn='<form action="/uploadfile" id="post" method="post" enctype="multipart/form-data"><div class="form-group"><label for="file1">Upload File 1:</label><input type="file" name="file1" id="" required class="form-control"></div><div class="form-group"><label for="file2">Upload File 2:</label><input type="file" name="file2" id="" required class="form-control"></div><div class="form-group"><button class="btn btn-danger btn-block">Upload Files</button></div></form>';
+    
+     console.log(index);
+    let upload_btn='<form action="/uploadfile/'+index+'" id="post" method="post" enctype="multipart/form-data"><div class="form-group"><label for="file1">Upload File 1:</label><input type="file" name="file1" id="" required class="form-control"></div><div class="form-group"><label for="file2">Upload File 2:</label><input type="file" name="file2" id="" required class="form-control"></div><div class="form-group"><button class="btn btn-danger btn-block">Upload Files</button></div></form>';
       upload.innerHTML=upload_btn;
      
 }

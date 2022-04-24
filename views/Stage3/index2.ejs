@@ -9,17 +9,24 @@
 </head>
 <body>
     <div class="section1">
+        <a href="/">
+            <button>Home</button>
+        </a>
         <header class="header"> <u>4 Questions</u></header>
         <div>
         <button class="ques1_btn">Question 1</button>
+        <div id="quetion1_status" style="display:none;"><%=q1%></div>
         <button class="ques2_btn">Question 2</button>
+        <div id="quetion2_status" style="display:none;"><%=q2%></div>
         <button class="ques3_btn">Question 3</button>
+        <div id="quetion3_status" style="display:none;"><%=q3%></div>
         <button class="ques4_btn">Question 4</button>
-        </div>
+        <div id="quetion4_status" style="display:none;"><%=q4%></div>
+    </div>
     </div>
     <div class="section2">
-                <div class="title"><u>Question</u></div>
-                <section>
+                <div id="ques_head" class="title"><u>Question</u></div>
+                <section id="ques_section">
                     <div class="que_text"></div>
                     <div class="constraint"><u>Constraints:</u></div>
                     <div class="constraints"></div>
@@ -31,7 +38,7 @@
                     <div class="input"><u>Inputs:</u></div>
                     <div class="inputs"></div>
                 </section>
-                <div class="upload"></div>
+                <div id="ques_upload" class="upload"></div>
                      
             
     </div>
