@@ -1,0 +1,106 @@
+body{
+	color:#fff;
+	font-size:100pt;
+}
+.section1{
+	background-image: linear-gradient(to right,#3780e0,#7dd7e7);
+	width:25%;
+	float:left;
+	height:250vh;
+	border-right: 0.8vw solid gray; 
+    box-sizing: border-box;
+    margin:0;
+    padding:0;	
+}
+.section2{
+	background-image: linear-gradient(to right,#3780e0,#7dd7e7);
+	width:75%;
+	float:left;
+	height:250vh;
+	margin:0;
+	padding:0;
+  box-sizing: border-box;
+}
+
+.section1 .header{
+   color: black;
+   font-weight: bold;
+   font-size: 30px;
+}
+
+.section1 .btnGroup{
+    display: inline-block;
+    font-size: 0;
+    position: center;
+    right: 15%;
+    margin: 50px;
+    padding-top: 50%;
+ }
+ .section1 button{
+     color:black;
+     background-color: aqua;
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    border: none;
+    padding: 15px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: bold;
+    font-size: 20px;
+ }
+ .section1 button:not(:last-child){
+   border-bottom: 2px solid blue;
+ }
+ .section1 button:hover{
+   background:rgb(48, 24, 134);
+   box-shadow: 5px 10px 18px rgb(41, 39, 173);
+   color:lightblue;
+ }
+
+ .section2 .title,.constraint,.example,.input{
+    font-size: 20px;
+    font-weight: 600;
+    padding-left: 10px;
+    padding-top: 10px;
+}
+
+section .que_text,
+section .constraints,
+section .inputs
+{
+   font-size: 20px;
+   font-weight: 100;
+   padding: 20px;
+}
+
+section .example1,
+section .example2,
+section .example3,
+section .example4{
+   font-size: 18px;
+   font-weight: 100;
+   padding: 8px;
+}
+
+.upload-btn-wrapper {
+   position: relative;
+   overflow: hidden;
+   display: inline-block;
+ }
+ 
+ .btn {
+   color: black;
+   background-color: aqua;
+   padding: 8px 20px;
+   border-radius: 8px;
+   font-size: 20px;
+   font-weight: bold;
+ }
+ 
+  label {
+   font-size:25px;
+   }
+   .form-group{
+     display: inline;
+   }
+     

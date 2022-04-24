@@ -154,6 +154,20 @@ exports.getAllStage2Q=async()=>{
                 }
 }
 
+exports.getUserCurrStage=async(userID)=>{
+    try{
+        const user=await User.findOne({
+            where:{userID:userID}
+        });
+    
+     
+        return user.currStage;
+        } 
+          catch(err){
+            console.log(err);
+                }
+}
+
 //**********************************Check Operations **********************************
 
 
