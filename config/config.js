@@ -6,20 +6,23 @@ module.exports ={
     "password": process.env.DB_PASS,
     "database": "Marathon",
     "host": "127.0.0.1",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "logging": false
   },
   "test": {
     "username": "postgres",
-    "password": "205121002",
+    "password": process.env.DB_PASS,
     "database": "Marathon",
     "host": "127.0.0.1",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "logging": false
   },
   "production": {
     "username": "postgres",
-    "password": "205121002",
+    "password": process.env.DB_PASS,
     "database": "Marathon",
     "host": "127.0.0.1",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "logging": false
   }
 }

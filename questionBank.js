@@ -5,6 +5,7 @@ let stage2Qlist=[1];
 exports.stage1Qlist=async()=>{
     try{
     const questions=await dbFunct.getAllStage1Q();
+  
     questions.forEach((question)=>{
         stage1Qlist.push(question.dataValues.qID);
     });

@@ -112,11 +112,11 @@ exports.getStage1Q=async(qID)=>{
 exports.getAllStage1Q=async()=>{
     try{
         const questions=await Stage1.findAll();
-    
-        questions.forEach((question)=>{
-            console.log(question.dataValues);
-        });
+        
+        if(questions)
         return questions;
+        else
+        return 0;
         } 
           catch(err){
             console.log(err);
@@ -143,11 +143,10 @@ exports.getStage2Q=async(qID)=>{
 exports.getAllStage2Q=async()=>{
     try{
         const questions=await Stage2.findAll();
-    
-        questions.forEach((question)=>{
-            console.log(question.dataValues);
-        });
+        if(questions)
         return questions;
+        else
+        return 0;
         } 
           catch(err){
             console.log(err);
@@ -167,7 +166,20 @@ exports.getUserCurrStage=async(userID)=>{
             console.log(err);
                 }
 }
-
+exports.getUser=async(userID)=>{
+    try{
+        const demo=await User.findOne({
+            where:{userID:userID}
+        });
+       if(demo)             
+       return demo.dataValues;
+       else
+       return 0
+        } 
+          catch(err){
+            console.log(err);
+                }
+}
 //**********************************Check Operations **********************************
 
 

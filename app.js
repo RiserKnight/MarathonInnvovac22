@@ -5,7 +5,7 @@ const ejs = require("ejs");
 const dbFunct = require(__dirname+"/database.js");
 const timeFunct = require(__dirname+"/Time.js");
 const qFunct = require(__dirname+"/questionBank.js");
-const {sequelize,UserDummy}=require('./models');
+const {sequelize}=require('./models');
 const multer = require("multer");
 const path = require('path');
 const formidable=require("formidable");
@@ -13,6 +13,7 @@ const fs=require("fs");
 const { prependOnceListener } = require("process");
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const axios = require('axios');
 require('dotenv').config();
 
 const date = new Date();
@@ -27,16 +28,18 @@ app.use(bodyParser.urlencoded({
 
 // initialize cookie-parser to allow us access the cookies stored in the browser. 
 app.use(cookieParser());
-
+app.set('port', 4321);
 // initialize express-session to allow us track the logged-in user across sessions.
 app.use(session({
-    key: 'user_sid',
-    secret: process.env.SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        expires: 3600000
-    }
+  key: 'user_sid',
+  secret: process.env.SECRET,
+  resave: true,
+  saveUninitialized: false,
+  cookie: {
+    path: '/',
+    httpOnly: true,
+    maxAge: 1*60*60*1000
+  }
 }));
 
 // This middleware will check if user's cookie is still saved in browser and user is not set, then automatically log the user out.
@@ -71,12 +74,12 @@ const eventD = new Date(2022,3,19,17,25,0);
 Remember to subtract 5 hours and 30 minutes
 
 eventD.setMilliseconds(0);
-cosole.log(eventD.getTime())*/
+console.log(eventD.getTime())*/
 
-const Stage1upT=1650389100000;
-const Stage1dwT=1650389220000;
-const Stage2upT=1650389100000;
-const Stage2dwT=1650389220000;
+const Stage1upT=1651425900000;
+const Stage1dwT=1654104300000;
+const Stage2upT=1651425900000;
+const Stage2dwT=1654104300000;
 const stage3Ques={q1:"false",q2:"false",q3:"false",q4:"false"};
 
 app.get('/', sessionChecker, (req, res) => {
@@ -86,12 +89,16 @@ app.get('/', sessionChecker, (req, res) => {
 // route for user's dashboard
 app.get('/home', (req, res) => {
   if (req.session.user && req.cookies.user_sid) {
+    
   userContent.status = true; 
   userContent.userID = req.session.user.userID; 
   userContent.userEmail = req.session.user.userEmail;
   userContent.userName = req.session.user.userName; 
-  console.log(JSON.stringify(req.session.user)); 
-  res.render("home");    
+  var hour = 3600000
+    req.session.cookie.expires = new Date(Date.now() + hour)
+    console.log("Auto LogOut Time: -"+req.session.cookie.expires.toLocaleString('en-US', {timeZone: "Asia/Kolkata"}));
+    console.log("User Session DashBoard "+JSON.stringify(req.session.user));
+    res.render("home");
   } else {
       res.redirect('/login');
   }
@@ -101,6 +108,7 @@ app.get("/stage1",async(req,res)=>{
   const date = new Date();
   if(date.getTime()>Stage1upT&&date.getTime()<Stage1dwT){
   stage1Qlist = await qFunct.stage1Qlist();
+ 
   res.render("Stage1/stage");
   }
   else{
@@ -185,21 +193,41 @@ res.redirect("/stage2/ques");
         res.sendFile(__dirname + '/views/login.html');
     })
     .post((req, res) => {
-        var userID = req.body.userID,
-            password = req.body.password;
+      var userID = req.body.userID,
+         password = req.body.password;
+        const url ="https://main.pcc.events/centralized/"+userID+"/"+password;
+  
+      
+      axios
+      .post(url)
+      .then(async(response)=> {
+        console.log(`statusCode: ${response.status}`);
+        const Data = JSON.parse(response.data)
+        console.log("User: "+userID+" Password: "+password+" Data: ");
+        console.log(Data);
+        if(Data.status){
+          req.session.user={
+            userID:Data.rollNo,
+            userName:Data.userName,
+            userEmail:Data.email,
+            status:Data.status
+          }
+          userContent=req.session.user;
+          const userNew=await dbFunct.getUser(userID);
+          if(!userNew){
+            console.log(await dbFunct.storeUser(userContent.userID,userContent.userName,0,0));
+          }
+          res.redirect("/home");
+        }
+        else
+        res.redirect("/login");
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  
     
-        UserDummy.findOne({ where: { userID: userID } }).then(function (user) {
-
-            if (!user) {
-                res.redirect("/login");
-            } else if (!user.validPassword(password)) {
-                res.redirect("/login");
-            } else {
-                req.session.user = user.dataValues;
-                res.redirect("/home");
-            }
-        });
-    });
+  });
 
     // route for user logout
 app.get('/logout', (req, res) => {
@@ -301,22 +329,60 @@ app.use(function (req, res, next) {
 });
 
 
-app.listen(3000,async()=> {
-    console.log("Server started on port 3000.");
+app.listen(app.get('port'),async()=> {
+  console.log(`Server started on port ${app.get('port')}`);
     await sequelize.authenticate();
     console.log("db connected");
-    /*UserDummy.create({
-      userID: 205121002,
-      userName: "Aayush Gupta",
-      userEmail:"205121002@nitt.edu",
-      password: "123"
-    });*/
-   // dbFunct.storeUser(10001,"Yum hai hum",0,1);
-   
-   //for(a=1;a<31;a++){
-    // dbFunct.storeStage2Q(2000+a,randQ,"option1","option2","option3","option4","Answer");
-   //  dbFunct.delStage1Q(2000+a); 
- // }
+
+    const quesS1 = await dbFunct.getAllStage1Q();
+    if(!quesS1){
+    await dbFunct.storeStage1Q(1001," I'm your newsboy","server");
+    await dbFunct.storeStage1Q(1002," what IT guys do on weekends." ,"diskdrive");
+    await dbFunct.storeStage1Q(1003," Computer spectacles enhances what. " ,"websight");
+    await dbFunct.storeStage1Q(1004," Twenty-five, but just eleven." ,"windows");
+    await dbFunct.storeStage1Q(1005," Which is one of extraterrestrials' favorite places on a computer." ,"spacebar");
+    await dbFunct.storeStage1Q(1006," what a computer does when it's worn out.","crashes");
+    await dbFunct.storeStage1Q(1007,"what you call a nurse who processes the website", "urlogist");
+    await dbFunct.storeStage1Q(1008," You can touch it while seeing different colors in me. You interact with me There is an app icon inside me. Who am ?", "GUI");
+    await dbFunct.storeStage1Q(1009,"I am a system of rule to convert information into another form ,but  you always messing with me by pushing and pulling me all the time. Don’t you have any manners? What am I?","code");
+    await dbFunct.storeStage1Q(1010," I have no name, but I am given many. In biology i generate indentical copy of cell same as in  computer.who am I ?","clone");
+    await dbFunct.storeStage1Q(1011, "Which data structure retains the same pronunciation, even after you left with one letter after removing four out of five?", "queue");
+    await dbFunct.storeStage1Q(1012, "I am a informal  language for everything yet everyone tells me fake and artificial . Good luck trying to compile me. What am I?", "pseudocode");
+    }
     
+    const quesS2 = await dbFunct.getAllStage2Q();
+    if(!quesS2){
+      await dbFunct.storeStage2Q(2001,"Where is the BIOS stored?", "Hard Disk", "RAM", "Flash Memory Chip", "Any of above", "option3");
+      await dbFunct.storeStage2Q(2002, "Internet is","complex system", " decentralized system", "dynamic system", "All of above", "option4");
+      await dbFunct.storeStage2Q(2003, "Use of Telnet","Remote login", "connecting to TV", "transferring files across net", "All of above", "option1");
+      await dbFunct.storeStage2Q(2004, " Another name for LCD", "LED", "TFT", "CRT", "All of above", "option3");
+      await dbFunct.storeStage2Q(2005, " Which of the following are the another names for a PEN Drive", "USBFlashDrive", "GigStick", "ThumbDrive", "All of the above", "option4");
+      await dbFunct.storeStage2Q(2006, "Which of the following is the device that is constructed with the series of sensors that detects hand and finger motion? ", "Digitizers","Dataglove","joystick","Track ball","option2");
+      await dbFunct.storeStage2Q(2007, "Blue Griffon is based on which rendering engine.","Webkit","Presto","Mecko", "Gecko","option4");
+      await dbFunct.storeStage2Q(2008,"which is not the audio element’s attribute","controls","loop","Check","src","option3");
+      await dbFunct.storeStage2Q(2009," Which language does not support polymorphism but supports classes","Ada","C++","Small talk","java","option1");
+      await dbFunct.storeStage2Q(2010, "What shall we use in the case of safe downcast","Static cast","Dynamic Cast","Manual cast","Implicit Cast","option2");
+      await dbFunct.storeStage2Q(2011,"Size of class is"," Sum of the size of all inherited variables along with the variables of the same class"," The size of the class is the largest size of the variable of the same class"," Classes in the programming languages do not have any size","Sum of the size of all the variables within a class.","option3");
+      await dbFunct.storeStage2Q(2012, "Which of the following does not have body", "interface", "class", "abstract method", "none of the above", "option3");
+      await dbFunct.storeStage2Q(2013, "Special software to create a job queue is called", "Linkage editor", "Interpreter", "Spooler", "Drive", "option3");
+      await dbFunct.storeStage2Q(2014, "context switching is a part of ", "interrupt servicing","interrupt handling","polling","spooling", "option2");
+      await dbFunct.storeStage2Q(2015, "The data blocks of a very large file in the Unix file system are allocated using", "contiguous allocation", "linked allocation", "indexed allocation", "an extension of indexed allocation", "option4");
+      await dbFunct.storeStage2Q(2016, "swap space resides in", "RAM", "Disk", "ROM", "On-chip cache", "option2");
+      await dbFunct.storeStage2Q(2017, " When R∩S=φ, then cost of computing R Natural Join S is ", "the same as R×S", "greater than R×S", "less than R×S", "can not say anything", "option1");
+      await dbFunct.storeStage2Q(2018, "R (A,B,C,D) is a relation. Which of the following does not have a lossless join dependency preserving BCNF decomposition", "A->B,B->CD", "A->B,B->C,C->D", "AB->C,C->AD", "A->BCD", "option4");
+      await dbFunct.storeStage2Q(2019, "If both the functional dependencies : X→Y and Y→X hold for two attributes X and Y then the relationship between X and Y is" , "M:N", "1:M", "1:M", "1:1", "option4");
+      await dbFunct.storeStage2Q(2020, "In tuple relational calculus P1 AND P2 is equivalent to" , "(¬P1OR¬P2)", "¬(P1OR¬P2)", "¬(¬P1OR P2)", "¬(¬P1OR¬P2)", "option4");
+      await dbFunct.storeStage2Q(2021, "Who suggested the name", "C++", "Rrick Mascitti","Steve Jobs","Ken Thompson","Dennis Ritchie", "option1");
+      await dbFunct.storeStage2Q(2022, "From which programming language Classes and Objects concept derived for C++?", "Java", "Simula67", "Objective C", "Fortran","option2");
+      await dbFunct.storeStage2Q(2023, "An set of rules that usually runs in polynomial time however probably returns inaccurate solutions is known as a", "Las Vegas Algorithm", " Monte Carlo Algorithm",  "Atlantic City Algorithm", "Approximation algorithm", "option2");
+      await dbFunct.storeStage2Q(2024, "Tabu search is", " A Binary Search Method", "Mathematical Optimization Method", "Non Associative", "The Acceptance Probability Function Is Used","option1");
+      await dbFunct.storeStage2Q(2025, "Tabu search is", " A Binary Search Method", "Mathematical Optimization Method", "Non Associative", "The Acceptance Probability Function Is Used","option1");
+      await dbFunct.storeStage2Q(2026, "Tabu search is", " A Binary Search Method", "Mathematical Optimization Method", "Non Associative", "The Acceptance Probability Function Is Used","option1");
+      await dbFunct.storeStage2Q(2027, "Tabu search is", " A Binary Search Method", "Mathematical Optimization Method", "Non Associative", "The Acceptance Probability Function Is Used","option1");
+      await dbFunct.storeStage2Q(2028, "Tabu search is", " A Binary Search Method", "Mathematical Optimization Method", "Non Associative", "The Acceptance Probability Function Is Used","option1");
+      await dbFunct.storeStage2Q(2029,"Tabu search is", " A Binary Search Method", "Mathematical Optimization Method", "Non Associative", "The Acceptance Probability Function Is Used","option1");
+      await dbFunct.storeStage2Q(2030,"Tabu search is", " A Binary Search Method", "Mathematical Optimization Method", "Non Associative", "The Acceptance Probability Function Is Used","option1");
+ 
+    }
 });
   
