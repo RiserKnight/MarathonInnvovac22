@@ -14,6 +14,9 @@ const { prependOnceListener } = require("process");
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const axios = require('axios');
+const { load } = require("nodemon/lib/config");
+const _ = require('lodash');
+
 require('dotenv').config();
 
 const date = new Date();
@@ -98,7 +101,7 @@ app.get('/home', (req, res) => {
     req.session.cookie.expires = new Date(Date.now() + hour)
     console.log("Auto LogOut Time: -"+req.session.cookie.expires.toLocaleString('en-US', {timeZone: "Asia/Kolkata"}));
     console.log("User Session DashBoard "+JSON.stringify(req.session.user));
-    res.render("home");
+    res.render("home",{userID:userContent.userID});
   } else {
       res.redirect('/login');
   }
@@ -106,9 +109,10 @@ app.get('/home', (req, res) => {
 
 app.get("/stage1",async(req,res)=>{
   const date = new Date();
-  if(date.getTime()>Stage1upT&&date.getTime()<Stage1dwT){
+  const userStage= await dbFunct.getUserCurrStage(userContent.userID);
+  if(date.getTime()>Stage1upT&&date.getTime()<Stage1dwT&&userStage==1){
   stage1Qlist = await qFunct.stage1Qlist();
- 
+ console.log("There should not be any space - _ between letters");
   res.render("Stage1/stage");
   }
   else{
@@ -126,24 +130,33 @@ app.get("/stage1/ques",async(req,res)=>{
   if(date.getTime()>Stage1upT&&date.getTime()<Stage1dwT){
   const index= stage1Qlist[0];
   const question = await dbFunct.getStage1Q(stage1Qlist[index]);
+  console.log(question);
   if(index===stage1Qlist.length-1){
     res.render("Stage1/end")
   }
   else{
+  await dbFunct.updateUserStage(2);
   res.render("Stage1/stageQue",{sno:stage1Qlist[0],question: question.question,qID: question.qID});
   }
   }
   });
 
   app.post("/stage1/ques/submit/:qID",async(req,res)=>{
-    console.log("Submit Answer: "+req.body.answer);
-    stage1Qlist[0]=stage1Qlist[0]+1;
-   const result=await dbFunct.checkStage1Q(req.params.qID,req.body.answer);
+   let ans=req.body.answer;
+   ans= _.trim(ans, '_- ');
+   ans = _.toLower(ans);
+   stage1Qlist[0]=stage1Qlist[0]+1;
+   console.log("Submit Answer: "+ans);
+   const result=await dbFunct.checkStage1Q(req.params.qID,ans);
    let x=0; 
-   if(result){x=10;}
+   if(result){x=20;}
    const curr = new Date();
-   dbFunct.storeSubmission(req.params.qID,0,userContent.userID,curr.getTime(),x,1)
-    res.redirect("/stage1/ques");
+   console.log(userContent.userID);
+   await dbFunct.storeSubmission(req.params.qID,userContent.userID,curr.getTime(),x,1)
+   console.log("Points: "+x);
+   const prevP=await dbFunct.getUserPoints(userContent.userID);
+   await dbFunct.updateUserPoints(userContent.userID,x+prevP);
+   res.redirect("/stage1/ques");
   
 });
 
@@ -193,8 +206,9 @@ res.redirect("/stage2/ques");
         res.sendFile(__dirname + '/views/login.html');
     })
     .post((req, res) => {
-      var userID = req.body.userID,
-         password = req.body.password;
+        var userID = req.body.userID,
+        password = req.body.password;
+        //var userID=205121002,password="Innovac1998"
         const url ="https://main.pcc.events/centralized/"+userID+"/"+password;
   
       
@@ -215,7 +229,7 @@ res.redirect("/stage2/ques");
           userContent=req.session.user;
           const userNew=await dbFunct.getUser(userID);
           if(!userNew){
-            console.log(await dbFunct.storeUser(userContent.userID,userContent.userName,0,0));
+            console.log(await dbFunct.storeUser(userContent.userID,userContent.userName,0,1));
           }
           res.redirect("/home");
         }
@@ -323,6 +337,19 @@ app.post('/uploadfile/:qID', uploadMultiple, function (req, res, next) {
     res.render("Stage3/index2",stage3Ques);
   });
 
+  app.get("/admin",(req,res)=>{
+res.render("admin");
+  });
+  app.post("/admin/:btID",async(req,res)=>{
+   btID=req.params.btID;
+   if(btID==1)
+   {
+     const users= await dbFunct.getAllUsers();
+     res.render("table",{users:users});
+   }
+      });
+    
+
 // route for handling 404 requests(unavailable routes)
 app.use(function (req, res, next) {
   res.status(404).send("Sorry can't find that!")
@@ -333,9 +360,10 @@ app.listen(app.get('port'),async()=> {
   console.log(`Server started on port ${app.get('port')}`);
     await sequelize.authenticate();
     console.log("db connected");
-
-    const quesS1 = await dbFunct.getAllStage1Q();
+   
+    const quesS1 = await dbFunct.getStage1Q(1001);
     if(!quesS1){
+     
     await dbFunct.storeStage1Q(1001," I'm your newsboy","server");
     await dbFunct.storeStage1Q(1002," what IT guys do on weekends." ,"diskdrive");
     await dbFunct.storeStage1Q(1003," Computer spectacles enhances what. " ,"websight");
@@ -343,14 +371,14 @@ app.listen(app.get('port'),async()=> {
     await dbFunct.storeStage1Q(1005," Which is one of extraterrestrials' favorite places on a computer." ,"spacebar");
     await dbFunct.storeStage1Q(1006," what a computer does when it's worn out.","crashes");
     await dbFunct.storeStage1Q(1007,"what you call a nurse who processes the website", "urlogist");
-    await dbFunct.storeStage1Q(1008," You can touch it while seeing different colors in me. You interact with me There is an app icon inside me. Who am ?", "GUI");
+    await dbFunct.storeStage1Q(1008," You can touch it while seeing different colors in me. You interact with me There is an app icon inside me. Who am ?", "gui");
     await dbFunct.storeStage1Q(1009,"I am a system of rule to convert information into another form ,but  you always messing with me by pushing and pulling me all the time. Don’t you have any manners? What am I?","code");
     await dbFunct.storeStage1Q(1010," I have no name, but I am given many. In biology i generate indentical copy of cell same as in  computer.who am I ?","clone");
     await dbFunct.storeStage1Q(1011, "Which data structure retains the same pronunciation, even after you left with one letter after removing four out of five?", "queue");
     await dbFunct.storeStage1Q(1012, "I am a informal  language for everything yet everyone tells me fake and artificial . Good luck trying to compile me. What am I?", "pseudocode");
     }
     
-    const quesS2 = await dbFunct.getAllStage2Q();
+    const quesS2 = await dbFunct.getStage2Q(2001);
     if(!quesS2){
       await dbFunct.storeStage2Q(2001,"Where is the BIOS stored?", "Hard Disk", "RAM", "Flash Memory Chip", "Any of above", "option3");
       await dbFunct.storeStage2Q(2002, "Internet is","complex system", " decentralized system", "dynamic system", "All of above", "option4");

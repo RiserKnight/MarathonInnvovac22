@@ -63,10 +63,10 @@ exports.storeStage4Q=async(qID,question,answer)=>{
     return "Question stored for Stage4";
 }
 
-exports.storeSubmission=async(qID,groupID,userID,timeStamp,fPoint,stage)=>{
+exports.storeSubmission=async(qID,userID,timeStamp,fPoint,stage)=>{
   
     try {
-        const demoUser=await Submission.create({qID,groupID,userID,timeStamp,fPoint,stage})
+        const demoUser=await Submission.create({qID,userID,timeStamp,fPoint,stage})
     } catch (err) {
         console.log(err);
     }
@@ -94,25 +94,24 @@ exports.delStage1Q=async(qID)=>{
 //**********************************Read Operations **********************************
 
 exports.getStage1Q=async(qID)=>{
-    var toR={};
     try{
         const question=await Stage1.findOne({
             where:{qID:qID}
         });
-    
-        console.log(question.dataValues);
-        toR=question.dataValues;
+        if(question)
+        return question.dataValues;
+        else
+        return 0;
         } 
           catch(err){
             console.log(err);
                 }
-    return toR;
+    
 }
 
 exports.getAllStage1Q=async()=>{
     try{
         const questions=await Stage1.findAll();
-        
         if(questions)
         return questions;
         else
@@ -124,15 +123,16 @@ exports.getAllStage1Q=async()=>{
 }
 
 exports.getStage2Q=async(qID)=>{
-    var toR={};
+    
     try{
         const question=await Stage2.findOne({
             where:{qID:qID}
         });
     
-        console.log(question.dataValues);
-        toR=question.dataValues;
-        return toR;
+        if(question)
+        return question.dataValues;
+        else
+        return 0;
     } 
           catch(err){
             console.log(err);
@@ -180,6 +180,36 @@ exports.getUser=async(userID)=>{
             console.log(err);
                 }
 }
+exports.getUserPoints=async(userID)=>{
+    try{
+        const demo=await User.findOne({
+            where:{userID:userID}
+        });
+        if(demo)     
+        return demo.dataValues.points;
+        else{
+        console.log("User Not Found");
+        return 0;
+        }
+        } 
+          catch(err){
+            console.log(err);
+                }
+}
+
+exports.getAllUsers=async()=>{
+    let users=[];
+    try{
+     const demo=await User.findAll();
+     demo.forEach(user => {
+         users.push(user.dataValues);
+     });
+     return users
+    }
+    catch(err){
+        console.log(err);
+            }
+}
 //**********************************Check Operations **********************************
 
 
@@ -209,4 +239,29 @@ exports.checkStage2Q=async(qID,answer)=>{
             console.log(err);
                 }
    
+}
+
+//**********************************Update Operations **********************************
+
+exports.updateUserPoints=async(userID,points)=>{
+    try{
+        await User.update(
+            {points: points},
+            {where:{userID:userID}
+        });
+    }
+    catch(err){
+        console.log(err);
+            }
+}
+exports.updateUserStage=async(userID,stage)=>{
+    try{
+        await User.update(
+            {currStage: stage},
+            {where:{userID:userID}
+        });
+    }
+    catch(err){
+        console.log(err);
+            }
 }

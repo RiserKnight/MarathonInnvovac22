@@ -19,15 +19,6 @@ module.exports = {
             notEmpty:{msg:'id must not be empty'}
           }
         },
-        groupID: {
-          type:DataTypes.INTEGER,
-          allowNull:false,
-          defaultValue: 0,
-          validate:{
-            notNull:{msg:'Group must have a id'},
-            notEmpty:{msg:'id must not be empty'}
-          }
-        },
         
       userID: {
         type:DataTypes.INTEGER,
