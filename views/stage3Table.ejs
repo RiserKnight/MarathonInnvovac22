@@ -20,7 +20,7 @@
             <div class="col-md-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h4><b>User Table</b></h4>
+                        <h4><b>Stage 3 Submission Table</b></h4>
                         <a href="/admin"><button>Admin Panel</button></a>
                     </div>
                     <div class="table-responsive">
@@ -31,37 +31,37 @@
                                         <h4>UserID</h4>
                                     </th>
                                     <th style="color: rgb(95, 98, 95);">
-                                        <h4>Name</h4>
+                                        <h4>Question No</h4>
                                     </th>
                                     <th style="color: rgb(95, 98, 95);">
-                                        <h4>Points</h4>
+                                        <h4>Submission</h4>
                                     </th>
                                     <th style="color: rgb(95, 98, 95);">
-                                        <h4>Current Stage</h4>
+                                        <h4>Created</h4>
                                     </th>
                                     <th style="color: rgb(95, 98, 95);">
-                                        <h4>Logged In</h4>
+                                        <h4>Updated</h4>
                                     </th>
                                 </tr>
                             </thead>
 
                             <tbody>
-                            <%users.forEach((user)=>{%>
+                            <%submissions.forEach((user)=>{%>
                                 <tr>
                                     <td>
                                         <h5> <b><%=user.userID%></b></h5>
                                     </td>
                                     <td>
-                                        <h5><%=user.name%></h5>
+                                        <h5><%=user.questionNo%></h5>
                                     </td>
                                     <td>
-                                        <h5><%=user.points%></h5>
+                                        <h5><%=user.submission%></h5>
                                     </td>
                                     <td>
-                                        <h5><%=user.currStage%></h5>
+                                        <h5><%=user.createdAt%></h5>
                                     </td>
                                     <td>
-                                        <h5><%=user.loggedin%></h5>
+                                        <h5><%=user.updatedAt%></h5>
                                     </td>
                                 </tr>
                              <%})%>

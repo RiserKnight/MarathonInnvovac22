@@ -47,6 +47,14 @@ module.exports = {
           notEmpty:{msg:'Stage must not be empty'}
         }
       },
+      loggedin:{
+        type: DataTypes.INTEGER,
+        allowNull:false,
+        validate:{
+          notNull:{msg:'User  must have loggedin'},
+          notEmpty:{msg:'Loggedin must not be empty'}
+        }
+      },
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE

@@ -1,0 +1,41 @@
+ 
+  body {
+	background: linear-gradient(-45deg, rgb(8, 222, 186),rgb(4, 62, 128), #23a6d5, #23d5ab);
+	background-size: 400% 400%;
+	animation: gradient 15s ease infinite;
+}
+
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+ 
+  .neon {
+    color: #fff;
+    text-shadow:
+      0 0 5px rgb(66, 9, 66),
+      0 0 10px rgb(32, 208, 211),
+      0 0 20px rgb(166, 71, 152),
+      0 0 40px rgb(27, 185, 196),
+      0 0 80px #0ff,
+      0 0 90px rgb(39, 190, 190),
+      0 0 100px rgb(225, 49, 26),
+      0 0 150px rgb(14, 16, 16);
+  }
+  div.test {
+    position: fixed;
+    top: 30%;
+    left: 35%;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-weight: bolder;
+    color: black;
+     
+    text-align: center;
+  }

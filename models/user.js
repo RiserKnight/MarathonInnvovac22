@@ -51,6 +51,14 @@ module.exports = (sequelize, DataTypes) => {
         notNull:{msg:'User  must have Stage'},
         notEmpty:{msg:'Stage must not be empty'}
       }
+    },
+    loggedin:{
+      type: DataTypes.INTEGER,
+      allowNull:false,
+      validate:{
+        notNull:{msg:'User  must have loggedin'},
+        notEmpty:{msg:'Loggedin must not be empty'}
+      }
     }
 
     

@@ -53,6 +53,7 @@ module.exports = (sequelize, DataTypes) => {
         notEmpty:{msg:'FullPoint must not be empty'}
       }
     },
+    Submission:DataTypes.STRING,
     stage:{
       type:DataTypes.INTEGER,
       allowNull:false,

@@ -1,12 +1,12 @@
 
-const {User,Stage1,Stage2,Submission}=require('./models')
+const {User,Stage1,Stage2,Submission,usersStage1,usersStage2,usersStage3}=require('./models')
 
 //********************************** Create Opeartions**********************************
 
-exports.storeUser=async(userID,name,points,currStage)=>{
+exports.storeUser=async(userID,name,points,currStage,loggedin)=>{
    
     try {
-        const demoUser=await User.create({userID,name,points,currStage})
+        const demoUser=await User.create({userID,name,points,currStage,loggedin})
     } catch (err) {
         console.log(err);
     }
@@ -35,17 +35,40 @@ exports.storeStage2Q=async(qID,question,option1,option2,option3,option4,answer)=
 
 
 
-exports.storeSubmission=async(qID,userID,timeStamp,fPoint,stage)=>{
+exports.storeSubmission=async(qID,userID,timeStamp,fPoint,submission,stage)=>{
   
     try {
-        const demoUser=await Submission.create({qID,userID,timeStamp,fPoint,stage})
+        const demoUser=await Submission.create({qID,userID,timeStamp,fPoint,submission,stage})
     } catch (err) {
         console.log(err);
     }
     return "Submission Stored Succesfully";
 }
 
-
+exports.storeIndex1=async(userID,index,visit)=>{
+    try {
+        await usersStage1.create({userID,index,visit}); 
+    } catch (error) {
+        console.log(err);
+    }
+    return "Index 1 Stored Succesfully";
+}
+exports.storeIndex2=async(userID,index,visit)=>{
+    try {
+        await usersStage2.create({userID,index,visit}); 
+    } catch (error) {
+        console.log(err);
+    }
+    return "Index 2 Stored Succesfully";
+}
+exports.storeIndex3=async(userID,questionNo,submission)=>{
+    try {
+        await usersStage3.create({userID,questionNo,submission}); 
+    } catch (err) {
+        console.log(err);
+    }
+    return "Index 3 Stored Succesfully";
+}
 //**********************************Delete Operations **********************************
 
 exports.delStage1Q=async(qID)=>{
@@ -172,7 +195,7 @@ exports.getUserPoints=async(userID)=>{
 exports.getAllUsers=async()=>{
     let users=[];
     try{
-     const demo=await User.findAll();
+     const demo=await User.findAll({order:[["points","DESC"]]});
      demo.forEach(user => {
          users.push(user.dataValues);
      });
@@ -192,6 +215,72 @@ exports.getAllSubmission=async()=>{
     catch(err){
         console.log(err);
             }
+}
+exports.getUsersStage1=async()=>{
+    let users=[];
+    try{
+     const demo=await usersStage1.findAll();
+     demo.forEach(user => {
+         users.push(user.dataValues);
+     });
+     return users
+    }
+    catch(err){
+        console.log(err);
+            }
+}
+
+exports.getIndex1=async(userID)=>{
+    try {
+       const demo= await usersStage1.findOne({
+            where:{userID:userID}
+        }); 
+        return demo.dataValues;
+    } catch (error) {
+        console.log(err);
+    }
+}
+exports.getIndex2=async(userID)=>{
+    try {
+       const demo= await usersStage2.findOne({
+            where:{userID:userID}
+        }); 
+        return demo.dataValues;
+    } catch (error) {
+        console.log(err);
+    }
+}
+exports.getIndex3=async(userID,questionNo)=>{
+    try {
+       const demo= await usersStage3.findOne({
+            where:{userID:userID,questionNo:questionNo}
+        }); 
+        if(demo)
+        return demo.dataValues;
+        else
+        return 0;
+    } catch (error) {
+        console.log(err);
+    }
+}
+exports.getAllIndex3=async(userID)=>{
+    let index3=[];
+    try {
+       const demo= await usersStage3.findAll({
+            where:{userID:userID}
+        }); 
+        if(demo){
+         demo.forEach(index => {
+             index3.push(index.dataValues);
+         });
+         return index3;
+        }
+        
+        else
+        return 0;
+    } catch (error) {
+        console.log(err);
+    }
 }
 //**********************************Check Operations **********************************
 
@@ -248,3 +337,61 @@ exports.updateUserStage=async(userID,stage)=>{
         console.log(err);
             }
 }
+exports.updateLogged=async(userID,loggedin)=>{
+    try{
+        await User.update(
+            {loggedin: loggedin},
+            {where:{userID:userID}
+        });
+    }
+    catch(err){
+        console.log(err);
+            }
+}
+exports.updateIndex1=async(userID,index)=>{
+    try{
+        await usersStage1.update(
+            {index: index},
+            {where:{userID:userID}
+        });
+    }
+    catch(err){
+        console.log(err);
+            }
+}
+exports.updateIndex2=async(userID,index)=>{
+    try{
+        await usersStage2.update(
+            {index: index},
+            {where:{userID:userID}
+        });
+    }
+    catch(err){
+        console.log(err);
+            }
+}
+
+exports.updateVisit1=async(userID,visit)=>{
+    try{
+        await usersStage1.update(
+            {visit: visit},
+            {where:{userID:userID}
+        });
+    }
+    catch(err){
+        console.log(err);
+            }
+}
+
+exports.updateVisit2=async(userID,visit)=>{
+    try{
+        await usersStage2.update(
+            {visit: visit},
+            {where:{userID:userID}
+        });
+    }
+    catch(err){
+        console.log(err);
+            }
+}
+
