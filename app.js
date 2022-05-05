@@ -10,7 +10,7 @@ const multer = require("multer");
 const path = require('path');
 const formidable=require("formidable");
 const fs=require("fs");
-const { prependOnceListener } = require("process");
+const { prependOnceListener, nextTick } = require("process");
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const axios = require('axios');
@@ -57,15 +57,35 @@ app.use((req, res, next) => {
 var userContent = {userID: 0,userName: ' ',userEmail:' ', status: false};
 
 // middleware function to check for logged-in users
-var sessionChecker = (req, res, next) => {
+var sessionLogged = (req, res, next) => {
+  console.log(req.originalUrl);
   if (req.session.user && req.cookies.user_sid) {
-  
+ 
       res.redirect("/home");
   } else {
       next();
   }    
 };
-
+var sessionChecker = (req, res, next) => {
+  console.log(req.originalUrl);
+  if (req.session.user && req.cookies.user_sid) {
+ 
+      next();
+  } else {
+      res.redirect("/login");
+  }    
+};
+var sessionAdmin = (req, res, next) => {
+  console.log(req.originalUrl);
+  if (req.session.user && req.cookies.user_sid) {
+    if(userContent.userID==205121002||userContent.userID==205121084||userContent.userID==205121106)
+      next();
+    else
+    res.redirect("/home")
+  } else {
+      res.redirect("/login");
+  }    
+};
 const randQ="Lorem Ipsum has been the industry's standard dummy text ever since the 1500s";
 let stage1Qlist=[1],stage2Qlist=[1];
 
@@ -85,8 +105,8 @@ const Stage2upT=1651425900000;
 const Stage2dwT=1654104300000;
 const stage3Ques={q1:"false",q2:"false",q3:"false",q4:"false"};
 
-app.get('/', sessionChecker, (req, res) => {
-  res.redirect("/login");
+app.get('/', (req, res) => {
+  res.redirect("/home");
 });
 
 // route for user's dashboard
@@ -101,16 +121,16 @@ app.get('/home', (req, res) => {
     req.session.cookie.expires = new Date(Date.now() + hour)
     console.log("Auto LogOut Time: -"+req.session.cookie.expires.toLocaleString('en-US', {timeZone: "Asia/Kolkata"}));
     console.log("User Session DashBoard "+JSON.stringify(req.session.user));
-    res.render("home",{userID:userContent.userID});
+    res.render("home",{userID:userContent.userID,status:userContent.status});
   } else {
-      res.redirect('/login');
+    res.render("home",{userID:userContent.userID,status:userContent.status});
   }
 });
 
-app.get("/stage1",async(req,res)=>{
+app.get("/stage1",sessionChecker,async(req,res)=>{
   const date = new Date();
   const userStage= await dbFunct.getUserCurrStage(userContent.userID);
-  if(date.getTime()>Stage1upT&&date.getTime()<Stage1dwT&&userStage==1){
+  if(date.getTime()>Stage1upT&&date.getTime()<Stage1dwT&&userStage===1){
   stage1Qlist = await qFunct.stage1Qlist();
  console.log("There should not be any space - _ between letters");
   res.render("Stage1/stage");
@@ -125,17 +145,18 @@ app.get("/stage1",async(req,res)=>{
   }
   });
 
-app.get("/stage1/ques",async(req,res)=>{
+app.get("/stage1/ques",sessionChecker,async(req,res)=>{
+  const userStage= await dbFunct.getUserCurrStage(userContent.userID);
   const date = new Date();
-  if(date.getTime()>Stage1upT&&date.getTime()<Stage1dwT){
+  if(date.getTime()>Stage1upT&&date.getTime()<Stage1dwT&&userStage===1){
   const index= stage1Qlist[0];
   const question = await dbFunct.getStage1Q(stage1Qlist[index]);
   console.log(question);
-  if(index===stage1Qlist.length-1){
+  if(index>12){
+    await dbFunct.updateUserStage(userContent.userID,2);
     res.render("Stage1/end")
   }
   else{
-  await dbFunct.updateUserStage(2);
   res.render("Stage1/stageQue",{sno:stage1Qlist[0],question: question.question,qID: question.qID});
   }
   }
@@ -149,20 +170,19 @@ app.get("/stage1/ques",async(req,res)=>{
    console.log("Submit Answer: "+ans);
    const result=await dbFunct.checkStage1Q(req.params.qID,ans);
    let x=0; 
-   if(result){x=20;}
+   if(result){x=10;}
    const curr = new Date();
-   console.log(userContent.userID);
-   await dbFunct.storeSubmission(req.params.qID,userContent.userID,curr.getTime(),x,1)
+   await dbFunct.storeSubmission(req.params.qID,userContent.userID,curr.getTime(),x,1);
    console.log("Points: "+x);
    const prevP=await dbFunct.getUserPoints(userContent.userID);
    await dbFunct.updateUserPoints(userContent.userID,x+prevP);
    res.redirect("/stage1/ques");
-  
 });
 
-app.get("/stage2",async(req,res)=>{
+app.get("/stage2",sessionChecker,async(req,res)=>{
+  const userStage= await dbFunct.getUserCurrStage(userContent.userID);
   const date = new Date();
-  if(date.getTime()>Stage2upT&&date.getTime()<Stage2dwT){
+  if(date.getTime()>Stage2upT&&date.getTime()<Stage2dwT&&userStage===2){
   stage2Qlist = await qFunct.stage2Qlist();
   res.render("Stage2/stage");
   }
@@ -176,12 +196,14 @@ app.get("/stage2",async(req,res)=>{
   }
   });
 
-app.get("/stage2/ques",async(req,res)=>{
+app.get("/stage2/ques",sessionChecker,async(req,res)=>{
+  const userStage= await dbFunct.getUserCurrStage(userContent.userID);
   const date = new Date();
-  if(date.getTime()>Stage2upT&&date.getTime()<Stage2dwT){
+  if(date.getTime()>Stage2upT&&date.getTime()<Stage2dwT&&userStage===2){
   const index= stage2Qlist[0];
   const question = await dbFunct.getStage2Q(stage2Qlist[index]);
-  if(index===stage2Qlist.length-1){
+  if(index>10){
+    await dbFunct.updateUserStage(userContent.userID,3);
     res.render("Stage1/end")
   }
   else{
@@ -195,14 +217,20 @@ app.post("/stage2/ques/submit/:qID",async(req,res)=>{
 console.log(req.body.user_ans);
 stage2Qlist[0]=stage2Qlist[0]+1;
 const result=await dbFunct.checkStage2Q(req.params.qID,req.body.user_ans);
-console.log(result);
+let x=0; 
+if(result){x=15;}
+const curr = new Date();
+await dbFunct.storeSubmission(req.params.qID,userContent.userID,curr.getTime(),x,2);
+console.log("Points: "+x);
+const prevP=await dbFunct.getUserPoints(userContent.userID);
+await dbFunct.updateUserPoints(userContent.userID,x+prevP);
 res.redirect("/stage2/ques");
 });
 
 
     // route for user Login
     app.route("/login")
-    .get(sessionChecker, (req, res) => {
+    .get(sessionLogged, (req, res) => {
         res.sendFile(__dirname + '/views/login.html');
     })
     .post((req, res) => {
@@ -248,7 +276,8 @@ app.get('/logout', (req, res) => {
   if (req.session.user && req.cookies.user_sid) {
   userContent.status = false; 
       res.clearCookie('user_sid');
-  console.log(JSON.stringify(userContent)); 
+      userContent = {userID: 0,userName: ' ',userEmail:' ', status: false};
+      console.log(JSON.stringify(userContent)); 
       res.redirect('/');
   } else {
       res.redirect('/login');
@@ -330,23 +359,64 @@ app.post('/uploadfile/:qID', uploadMultiple, function (req, res, next) {
     }
   });
 
-  app.get("/stage3",(req,res)=>{
+  app.get("/stage3",sessionChecker,(req,res)=>{
     res.sendFile(__dirname+"/views/Stage3/index1.html");
   });
-  app.get("/stage3/que",(req,res)=>{
+  app.get("/stage3/que",sessionChecker,(req,res)=>{
     res.render("Stage3/index2",stage3Ques);
   });
 
-  app.get("/admin",(req,res)=>{
+  app.get("/admin",sessionAdmin,(req,res)=>{
 res.render("admin");
   });
-  app.post("/admin/:btID",async(req,res)=>{
+  app.post("/admin/:btID",sessionAdmin,async(req,res)=>{
    btID=req.params.btID;
    if(btID==1)
    {
      const users= await dbFunct.getAllUsers();
-     res.render("table",{users:users});
+     res.render("userTable",{users:users});
    }
+   if(btID==2)
+   {
+     let questions=[];
+     const questionsRaw= await dbFunct.getAllStage1Q();
+     questionsRaw.forEach((question)=>{
+     questions.push(question.dataValues);
+     });
+     res.render("stage1Table",{questions:questions});
+   }
+   if(btID==3)
+   {
+     let questions=[];
+     const questionsRaw= await dbFunct.getAllStage2Q();
+     questionsRaw.forEach((question)=>{
+     questions.push(question.dataValues);
+     });
+     res.render("stage2Table",{questions:questions});
+   }
+   if(btID==4)
+   {
+     let submissions=[];
+     const submissionsRaw= await dbFunct.getAllSubmission();
+     submissionsRaw.forEach((question)=>{
+      submissions.push(question.dataValues);
+     });
+     res.render("submissionTable",{submissions:submissions});
+   }
+   if(btID==5){
+     const userID=parseInt(req.body.roll);
+     const points=parseInt(req.body.points);
+     await dbFunct.updateUserPoints(userID,points);
+     const users= await dbFunct.getAllUsers();
+     res.render("userTable",{users:users});
+   }
+   if(btID==6){
+    const userID=parseInt(req.body.roll);
+    const stage=parseInt(req.body.stage);
+    await dbFunct.updateUserStage(userID,stage);
+    const users= await dbFunct.getAllUsers();
+    res.render("userTable",{users:users});
+  }
       });
     
 

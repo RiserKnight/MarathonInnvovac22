@@ -1,5 +1,5 @@
 
-const {User,Stage1,Stage2,Stage3,Stage4,Group,Submission}=require('./models')
+const {User,Stage1,Stage2,Submission}=require('./models')
 
 //********************************** Create Opeartions**********************************
 
@@ -11,16 +11,6 @@ exports.storeUser=async(userID,name,points,currStage)=>{
         console.log(err);
     }
     return "User Sucessfully stored";
-}
-
-exports.storeUserInGroup=async(groupID,userID)=>{
-  
-    try {
-        const demoUser=await Group.create({groupID,userID})
-    } catch (err) {
-        console.log(err);
-    }
-    return "User Sucessfully added to group";
 }
 
 exports.storeStage1Q=async(qID,question,answer)=>{
@@ -43,25 +33,7 @@ exports.storeStage2Q=async(qID,question,option1,option2,option3,option4,answer)=
     return "Question stored for Stage2";
 }
 
-exports.storeStage3Q=async(qID,question,answer)=>{
-  
-    try {
-        const demoUser=await Stage3.create({qID,question,answer})
-    } catch (err) {
-        console.log(err);
-    }
-    return "Question stored for Stage3";
-}
 
-exports.storeStage4Q=async(qID,question,answer)=>{
-  
-    try {
-        const demoUser=await Stage4.create({qID,question,answer})
-    } catch (err) {
-        console.log(err);
-    }
-    return "Question stored for Stage4";
-}
 
 exports.storeSubmission=async(qID,userID,timeStamp,fPoint,stage)=>{
   
@@ -205,6 +177,17 @@ exports.getAllUsers=async()=>{
          users.push(user.dataValues);
      });
      return users
+    }
+    catch(err){
+        console.log(err);
+            }
+}
+exports.getAllSubmission=async()=>{
+
+    try{
+     const demo=await Submission.findAll();
+   
+     return demo;
     }
     catch(err){
         console.log(err);

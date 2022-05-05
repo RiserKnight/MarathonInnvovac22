@@ -10,20 +10,39 @@
 <body>
 
     <h3>Admin Panel Of TradeX</h3>
+    <a href="/"><button>Home</button></a>
     <h4>Tables</h4>
     <div>
         <form action="/admin/1" method="post">
             <input type="submit" value="User">
         </form>
+        <form action="/admin/2" method="post">
+            <input type="submit" value="Stage 1">
+        </form>
+        <form action="/admin/3" method="post">
+            <input type="submit" value="Stage 2">
+        </form>
+        <form action="/admin/4" method="post">
+            <input type="submit" value="Submission">
+        </form>
     </div>
     <br>
+    <h4>Updates</h4>
     <div>
-        <form action="#">
-            <label for="input1">Input 1</label>
-            <input type="text" placeholder="Enter here">
+        <form action="/admin/5" method="post">
+            <label for="input1">Roll_No</label>
+            <input type="numeric" name="roll" placeholder="Enter here">
+            <label for="input1">Points</label>
+            <input type="numeric" name="points" placeholder="Enter here">
             <input type="submit" value="Submit">
         </form>
-        
+        <form action="/admin/6" method="post">
+            <label for="input1">Roll_No</label>
+            <input type="numeric" name="roll" placeholder="Enter here">
+            <label for="input1">Current Stage</label>
+            <input type="numeric" name="stage" placeholder="Enter here">
+            <input type="submit" value="Submit">
+        </form>
        
     </div>
 
