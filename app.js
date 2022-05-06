@@ -126,9 +126,9 @@ app.get('/home', (req, res) => {
     req.session.cookie.expires = new Date(Date.now() + hour)
     console.log("Auto LogOut Time: -"+req.session.cookie.expires.toLocaleString('en-US', {timeZone: "Asia/Kolkata"}));
     console.log("User Session DashBoard "+JSON.stringify(req.session.user));
-    res.render("home",{userID:userContent.userID,status:status});
-  } else {
     res.render("home",{userID:userID,status:status});
+  } else {
+    res.render("home",{userID:"",status:false});
   }
 });
 
@@ -239,14 +239,15 @@ app.get("/stage2/ques",sessionChecker,async(req,res)=>{
 
 app.post("/stage2/ques/submit/:qID",async(req,res)=>{
 console.log(req.body.user_ans);
+const userID=req.session.user.userID;
 const result=await dbFunct.checkStage2Q(req.params.qID,req.body.user_ans);
 let x=0; 
 if(result){x=15;}
 const curr = new Date();
-await dbFunct.storeSubmission(req.params.qID,userContent.userID,curr.getTime(),x,req.body.user_ans,2);
+await dbFunct.storeSubmission(req.params.qID,userID,curr.getTime(),x,req.body.user_ans,2);
 console.log("Points: "+x);
-const prevP=await dbFunct.getUserPoints(userContent.userID);
-await dbFunct.updateUserPoints(userContent.userID,x+prevP);
+const prevP=await dbFunct.getUserPoints(userID);
+await dbFunct.updateUserPoints(userID,x+prevP);
 res.redirect("/stage2/ques");
 });
 
@@ -278,16 +279,16 @@ res.redirect("/stage2/ques");
           userContent=req.session.user;
           const userNew=await dbFunct.getUser(userID);
           if(!userNew){
-            console.log(await dbFunct.storeUser(userContent.userID,userContent.userName,0,1,1));
-            console.log(await dbFunct.storeIndex1(userContent.userID,1,0));
-            console.log(await dbFunct.storeIndex2(userContent.userID,1,0));
+            console.log(await dbFunct.storeUser(userID,Data.userName,0,1,1));
+            console.log(await dbFunct.storeIndex1(userID,1,0));
+            console.log(await dbFunct.storeIndex2(userID,1,0));
             res.redirect("/home");
           }
           else{
             if(userNew.loggedin==1)
             res.redirect("/logout")
             else{
-            await dbFunct.updateLogged(userContent.userID,1);
+            await dbFunct.updateLogged(userID,1);
             res.redirect("/home");
           }
         } 
@@ -348,6 +349,7 @@ var uploadMultiple = upload.fields([{ name: 'file1', maxCount: 1 }, { name: 'fil
 
 app.post('/uploadfile/:qID', uploadMultiple, function (req, res, next) {
   const qID=parseInt(req.params.qID);
+  const userID=req.session.user.userID;
   if(req.files){
     var v= req.files.file2[0].path;
         console.log(req.files);
@@ -358,28 +360,28 @@ app.post('/uploadfile/:qID', uploadMultiple, function (req, res, next) {
       let score=0;
       switch (qID) {
         case 0:
-          await dbFunct.storeIndex3(userContent.userID,1,data1);
+          await dbFunct.storeIndex3(userID,1,data1);
           stage3Ques.q1=true;
           if(output1==data1){
             score=80;
          }
           break;
         case 1:
-          await dbFunct.storeIndex3(userContent.userID,2,data1);
+          await dbFunct.storeIndex3(userID,2,data1);
           stage3Ques.q2=true;
           if(output2==data1){
             score=50;
          }
           break;
         case 2:
-          await dbFunct.storeIndex3(userContent.userID,3,data1);
+          await dbFunct.storeIndex3(userID,3,data1);
           stage3Ques.q3=true;
           if(output3==data1){
             score=60;
          }
           break;
         case 3:
-          await dbFunct.storeIndex3(userContent.userID,4,data1);
+          await dbFunct.storeIndex3(userID,4,data1);
           stage3Ques.q4=true;
           if(output4==data1){
             score=100;
@@ -389,8 +391,8 @@ app.post('/uploadfile/:qID', uploadMultiple, function (req, res, next) {
             console.log("Bekar");
             break;
         }    
-        const prevP=await dbFunct.getUserPoints(userContent.userID);
-        await dbFunct.updateUserPoints(userContent.userID,score+prevP);
+        const prevP=await dbFunct.getUserPoints(userID);
+        await dbFunct.updateUserPoints(userID,score+prevP);
         res.redirect("/stage3/que");
     })  
     }
@@ -399,8 +401,9 @@ app.post('/uploadfile/:qID', uploadMultiple, function (req, res, next) {
  
 
   app.get("/stage3",sessionChecker,async(req,res)=>{
+    const userID=req.session.user.userID;
   const date = new Date();
-  const userStage= await dbFunct.getUserCurrStage(userContent.userID);
+  const userStage= await dbFunct.getUserCurrStage(userID);
   if(date.getTime()>Stage1upT&&date.getTime()<Stage1dwT&&userStage===3){
     res.sendFile(__dirname+"/views/Stage3/index1.html");
   }
@@ -415,19 +418,20 @@ app.post('/uploadfile/:qID', uploadMultiple, function (req, res, next) {
    
   });
   app.get("/stage3/que",sessionChecker,async(req,res)=>{
-    const stage3index1= await dbFunct.getIndex3(userContent.userID,1);
+    const userID=req.session.user.userID;
+    const stage3index1= await dbFunct.getIndex3(userID,1);
      if(stage3index1)
      stage3Ques.q1=true;
 
-     const stage3index2= await dbFunct.getIndex3(userContent.userID,2);
+     const stage3index2= await dbFunct.getIndex3(userID,2);
      if(stage3index2)
      stage3Ques.q2=true;
 
-     const stage3index3= await dbFunct.getIndex3(userContent.userID,3);
+     const stage3index3= await dbFunct.getIndex3(userID,3);
      if(stage3index3)
      stage3Ques.q3=true;
 
-     const stage3index4= await dbFunct.getIndex3(userContent.userID,4);
+     const stage3index4= await dbFunct.getIndex3(userID,4);
      if(stage3index4)
      stage3Ques.q4=true;
     res.render("Stage3/index2",stage3Ques);
