@@ -31,7 +31,7 @@ app.use(bodyParser.urlencoded({
 
 // initialize cookie-parser to allow us access the cookies stored in the browser. 
 app.use(cookieParser());
-app.set('port', 4321);
+app.set('port', 3000);
 // initialize express-session to allow us track the logged-in user across sessions.
 app.use(session({
   key: 'user_sid',
@@ -47,9 +47,8 @@ app.use(session({
 
 // This middleware will check if user's cookie is still saved in browser and user is not set, then automatically log the user out.
 // This usually happens when you stop your express server after login, your cookie still remains saved in the browser.
-app.use(async(req, res, next) => {
+app.use((req, res, next) => {
   if (req.cookies.user_sid && !req.session.user) {
-    await dbFunct.updateLogged(userContent.userID,0);
       res.clearCookie('user_sid');        
   }
   next();
@@ -78,8 +77,10 @@ var sessionChecker = (req, res, next) => {
 };
 var sessionAdmin = (req, res, next) => {
   console.log(req.originalUrl);
+  
   if (req.session.user && req.cookies.user_sid) {
-    if(userContent.userID==205121002||userContent.userID==205121084||userContent.userID==205121106)
+    const userID=req.session.user.userID;
+    if(userID==205121002||userID==205121084||userID==205121106)
       next();
     else
     res.redirect("/home")
@@ -115,7 +116,8 @@ app.get('/', (req, res) => {
 // route for user's dashboard
 app.get('/home', (req, res) => {
   if (req.session.user && req.cookies.user_sid) {
-    
+    const userID=req.session.user.userID;
+    const status=req.session.user.status;
   userContent.status = true; 
   userContent.userID = req.session.user.userID; 
   userContent.userEmail = req.session.user.userEmail;
@@ -124,21 +126,22 @@ app.get('/home', (req, res) => {
     req.session.cookie.expires = new Date(Date.now() + hour)
     console.log("Auto LogOut Time: -"+req.session.cookie.expires.toLocaleString('en-US', {timeZone: "Asia/Kolkata"}));
     console.log("User Session DashBoard "+JSON.stringify(req.session.user));
-    res.render("home",{userID:userContent.userID,status:userContent.status});
+    res.render("home",{userID:userContent.userID,status:status});
   } else {
-    res.render("home",{userID:userContent.userID,status:userContent.status});
+    res.render("home",{userID:userID,status:status});
   }
 });
 
 app.get("/stage1",sessionChecker,async(req,res)=>{
+  const userID=req.session.user.userID;
   const date = new Date();
-  const userStage= await dbFunct.getUserCurrStage(userContent.userID);
+  const userStage= await dbFunct.getUserCurrStage(userID);
   if(date.getTime()>Stage1upT&&date.getTime()<Stage1dwT&&userStage===1){
   stage1Qlist = await qFunct.stage1Qlist();
   console.log("There should not be any space - _ between letters");
-  const visit=await dbFunct.getIndex1(userContent.userID);
+  const visit=await dbFunct.getIndex1(userID);
   if(visit.visit==0&&visit.index<13){
-  await dbFunct.updateVisit1(userContent.userID,1);
+  await dbFunct.updateVisit1(userID,1);
   res.render("Stage1/stage");}
   else
   res.redirect("/stage1/ques");
@@ -154,26 +157,27 @@ app.get("/stage1",sessionChecker,async(req,res)=>{
   });
 
 app.get("/stage1/ques",sessionChecker,async(req,res)=>{
-  
-  const userStage= await dbFunct.getUserCurrStage(userContent.userID);
+  const userID=req.session.user.userID;
+  const userStage= await dbFunct.getUserCurrStage(userID);
   const date = new Date();
   if(date.getTime()>Stage1upT&&date.getTime()<Stage1dwT&&userStage===1){
-  const index= await dbFunct.getIndex1(userContent.userID);
+  const index= await dbFunct.getIndex1(userID);
   stage1Qlist[0]=index.index;
   const question = await dbFunct.getStage1Q(stage1Qlist[index.index]);
   if(index.index>12){
-    await dbFunct.updateUserStage(userContent.userID,2);
+    await dbFunct.updateUserStage(userID,2);
     res.render("Stage1/end")
   }
   else{
     stage1Qlist[0]=stage1Qlist[0]+1;
-    await dbFunct.updateIndex1(userContent.userID,stage1Qlist[0]);
+    await dbFunct.updateIndex1(userID,stage1Qlist[0]);
   res.render("Stage1/stageQue",{sno:stage1Qlist[0]-1,question: question.question,qID: question.qID});
   }
   }
   });
 
   app.post("/stage1/ques/submit/:qID",async(req,res)=>{
+    const userID=req.session.user.userID;
    let ans=req.body.answer;
    ans= _.trim(ans, '_- ');
    ans = _.toLower(ans);
@@ -182,21 +186,22 @@ app.get("/stage1/ques",sessionChecker,async(req,res)=>{
    let x=0; 
    if(result){x=10;}
    const curr = new Date();
-   await dbFunct.storeSubmission(req.params.qID,userContent.userID,curr.getTime(),x,ans,1);
+   await dbFunct.storeSubmission(req.params.qID,userID,curr.getTime(),x,ans,1);
    console.log("Points: "+x);
-   const prevP=await dbFunct.getUserPoints(userContent.userID);
-   await dbFunct.updateUserPoints(userContent.userID,x+prevP);
+   const prevP=await dbFunct.getUserPoints(userID);
+   await dbFunct.updateUserPoints(userID,x+prevP);
    res.redirect("/stage1/ques");
 });
 
 app.get("/stage2",sessionChecker,async(req,res)=>{
-  const userStage= await dbFunct.getUserCurrStage(userContent.userID);
+  const userID=req.session.user.userID;
+  const userStage= await dbFunct.getUserCurrStage(userID);
   const date = new Date();
   if(date.getTime()>Stage2upT&&date.getTime()<Stage2dwT&&userStage===2){
   stage2Qlist = await qFunct.stage2Qlist();
-  const visit=await dbFunct.getIndex2(userContent.userID);
+  const visit=await dbFunct.getIndex2(userID);
   if(visit.visit==0&&visit.index<11){
-  await dbFunct.updateVisit2(userContent.userID,1);
+  await dbFunct.updateVisit2(userID,1);
   res.render("Stage2/Stage");}
   else
   res.redirect("/stage2/ques");
@@ -212,19 +217,20 @@ app.get("/stage2",sessionChecker,async(req,res)=>{
   });
 
 app.get("/stage2/ques",sessionChecker,async(req,res)=>{
-  const userStage= await dbFunct.getUserCurrStage(userContent.userID);
+  const userID=req.session.user.userID;
+  const userStage= await dbFunct.getUserCurrStage(userID);
   const date = new Date();
   if(date.getTime()>Stage2upT&&date.getTime()<Stage2dwT&&userStage===2){
-  const index= await dbFunct.getIndex2(userContent.userID);
+  const index= await dbFunct.getIndex2(userID);
   stage2Qlist[0]=index.index;
   const question = await dbFunct.getStage2Q(stage2Qlist[index.index]);
   if(index.index>10){
-    await dbFunct.updateUserStage(userContent.userID,3);
+    await dbFunct.updateUserStage(userID,3);
     res.render("Stage1/end")
   }
   else{
     stage2Qlist[0]=stage2Qlist[0]+1;
-    await dbFunct.updateIndex2(userContent.userID,stage2Qlist[0]);
+    await dbFunct.updateIndex2(userID,stage2Qlist[0]);
   res.render("Stage2/stageQue",{question: question.question,qID: question.qID,
     option1: question.option1,option2: question.option2,option3: question.option3,option4: question.option4});
   }
