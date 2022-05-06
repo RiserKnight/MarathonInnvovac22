@@ -307,10 +307,10 @@ res.redirect("/stage2/ques");
 app.get('/logout', async(req, res) => {
   if (req.session.user && req.cookies.user_sid) {
   userContent.status = false; 
+  req.session.user.status=false;
       res.clearCookie('user_sid');
-      await dbFunct.updateLogged(userContent.userID,0);
-      userContent = {userID: 0,userName: ' ',userEmail:' ', status: false};
-      console.log(JSON.stringify(userContent)); 
+      await dbFunct.updateLogged(req.session.user.userID,0);
+      userContent = {userID: 0,userName: ' ',userEmail:' ', status: false}; 
       res.redirect('/');
   } else {
       res.redirect('/login');
@@ -441,7 +441,7 @@ app.post('/uploadfile/:qID', uploadMultiple, function (req, res, next) {
 res.render("admin");
   });
   app.post("/admin/:btID",sessionAdmin,async(req,res)=>{
-   btID=req.params.btID;
+   btID=parseInt(req.params.btID);
    if(btID==1)
    {
      const users= await dbFunct.getAllUsers();
@@ -505,17 +505,19 @@ res.render("admin");
    }
    if(btID==9)
    {
-     userID=req.body.roll;
+     userID=parseInt(req.body.roll);
      await dbFunct.updateUserPoints(userID,0);
      await dbFunct.updateUserStage(userID,1);
-     await dbFunct.updateIndex1(userContent.userID,1);
-    await dbFunct.updateVisit1(userContent.userID,0);
+     await dbFunct.updateIndex1(userID,1);
+    await dbFunct.updateVisit1(userID,0);
+    await dbFunct.updateIndex2(userID,1);
+    await dbFunct.updateVisit2(userID,0);
     const users= await dbFunct.getAllUsers();
     res.render("userTable",{users:users});
    }
    if(btID==10)
    {
-     userID=req.body.roll;
+     userID=parseInt(req.body.roll);
      const submissions=await dbFunct.getAllIndex3(userID);
      res.render("stage3Table",{submissions:submissions});
    }
@@ -524,6 +526,15 @@ res.render("admin");
     const users= await dbFunct.getUsersStage2();
     res.render("usersStageTable",{stage:"Stage 2",users:users});
    }
+   if(btID==12){
+    const userID=parseInt(req.body.roll);
+    const index=parseInt(req.body.index);
+    const visit=parseInt(req.body.visit);
+    await dbFunct.updateIndex2(userID,index);
+    await dbFunct.updateVisit2(userID,visit);
+    const users= await dbFunct.getUsersStage2();
+    res.render("usersStageTable",{stage:"Stage 2",users:users});
+  }
       });
     
 app.get("/contact",(req,res)=>{
@@ -545,6 +556,10 @@ app.listen(app.get('port'),async()=> {
   console.log(`Server started on port ${app.get('port')}`);
     await sequelize.authenticate();
     console.log("db connected");
+    const users =await dbFunct.getAllUsers();
+    users.forEach(async(user) => {
+      await dbFunct.updateLogged(user.userID,0);
+    });
    
     const quesS1 = await dbFunct.getStage1Q(1001);
     if(!quesS1){
