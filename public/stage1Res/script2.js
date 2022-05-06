@@ -14,7 +14,7 @@ submitBtn.addEventListener("click", function(event){
 window.onload = ()=>{
     
     quiz_box.classList.add("activeQuiz"); //show quiz box
-    startTimer(60); //calling startTimer function
+    startTimer(10); //calling startTimer function
     startTimerLine(0); //calling startTimerLine function
 
 }
@@ -29,7 +29,7 @@ submitBtn.onclick=()=>{
 
 }
 
-let timeValue =  20;
+let timeValue =  60;
 let counter;
 let counterLine;
 let widthValue = 0;

@@ -49,7 +49,13 @@ module.exports = {
           notEmpty:{msg:'FullPoint must not be empty'}
         }
       },
-      Submission:DataTypes.STRING,
+      userans:{
+        type:DataTypes.STRING,
+        allowNull:false,
+        validate:{
+          notNull:{msg:'Submission must have a value'},
+          notEmpty:{msg:'Submission value must not be empty'}
+        }},
       stage:{
         type:DataTypes.INTEGER,
         allowNull:false,

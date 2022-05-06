@@ -1,5 +1,5 @@
 
-const {User,Stage1,Stage2,Submission,usersStage1,usersStage2,usersStage3}=require('./models')
+const {User,Stage1,Stage2,Submission,usersStage1,usersStage2,usersStage3,stage2QList}=require('./models')
 
 //********************************** Create Opeartions**********************************
 
@@ -35,10 +35,11 @@ exports.storeStage2Q=async(qID,question,option1,option2,option3,option4,answer)=
 
 
 
-exports.storeSubmission=async(qID,userID,timeStamp,fPoint,submission,stage)=>{
+exports.storeSubmission=async(qID,userID,timeStamp,fPoint,userans,stage)=>{
   
     try {
-        const demoUser=await Submission.create({qID,userID,timeStamp,fPoint,submission,stage})
+        console.log("Database: "+userans);
+        const demoUser=await Submission.create({qID,userID,timeStamp,fPoint,userans,stage})
     } catch (err) {
         console.log(err);
     }
@@ -69,6 +70,14 @@ exports.storeIndex3=async(userID,questionNo,submission)=>{
     }
     return "Index 3 Stored Succesfully";
 }
+
+exports.storeStage2QList=async(userID,list)=>{
+    try {
+        await stage2QList.create({userID,list})
+    } catch (error) {
+        console.log(error);
+    }
+}
 //**********************************Delete Operations **********************************
 
 exports.delStage1Q=async(qID)=>{
@@ -85,7 +94,13 @@ exports.delStage1Q=async(qID)=>{
     return "Question deleted "+ qID+" for Stage1";
 }
 
-
+exports.delStage2QList=async(userID)=>{
+    try {
+        await stage2QList.destroy({where:{userID:userID}})
+    } catch (error) {
+        console.log(error);
+    }
+}
 //**********************************Read Operations **********************************
 
 exports.getStage1Q=async(qID)=>{
@@ -293,6 +308,15 @@ exports.getAllIndex3=async(userID)=>{
         return 0;
     } catch (error) {
         console.log(err);
+    }
+}
+
+exports.getStage2QList=async(userID)=>{
+    try {
+        const list = await stage2QList.findOne({where:{userID:userID}})
+        return list.dataValues.list
+    } catch (error) {
+        console.log(error);
     }
 }
 //**********************************Check Operations **********************************

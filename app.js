@@ -89,7 +89,7 @@ var sessionAdmin = (req, res, next) => {
   }    
 };
 const randQ="Lorem Ipsum has been the industry's standard dummy text ever since the 1500s";
-let stage1Qlist=[1],stage2Qlist=[1];
+let stage1Qlist=[1];
 
 /*
 To get time in number use below code
@@ -162,21 +162,19 @@ app.get("/stage1/ques",sessionChecker,async(req,res)=>{
   const date = new Date();
   if(date.getTime()>Stage1upT&&date.getTime()<Stage1dwT&&userStage===1){
   const index= await dbFunct.getIndex1(userID);
-  stage1Qlist[0]=index.index;
   const question = await dbFunct.getStage1Q(stage1Qlist[index.index]);
   if(index.index>12){
     await dbFunct.updateUserStage(userID,2);
     res.render("Stage1/end")
   }
   else{
-    stage1Qlist[0]=stage1Qlist[0]+1;
-    await dbFunct.updateIndex1(userID,stage1Qlist[0]);
-  res.render("Stage1/stageQue",{sno:stage1Qlist[0]-1,question: question.question,qID: question.qID});
+    await dbFunct.updateIndex1(userID,index.index+1);
+  res.render("Stage1/stageQue",{sno:index.index,question: question.question,qID: question.qID});
   }
   }
   });
 
-  app.post("/stage1/ques/submit/:qID",async(req,res)=>{
+  app.post("/stage1/ques/submit/:qID",sessionChecker,async(req,res)=>{
     const userID=req.session.user.userID;
    let ans=req.body.answer;
    ans= _.trim(ans, '_- ');
@@ -198,9 +196,10 @@ app.get("/stage2",sessionChecker,async(req,res)=>{
   const userStage= await dbFunct.getUserCurrStage(userID);
   const date = new Date();
   if(date.getTime()>Stage2upT&&date.getTime()<Stage2dwT&&userStage===2){
-  stage2Qlist = await qFunct.stage2Qlist();
   const visit=await dbFunct.getIndex2(userID);
   if(visit.visit==0&&visit.index<11){
+  const stage2Qlist = await qFunct.stage2Qlist();
+  await dbFunct.storeStage2QList(userID,JSON.stringify(stage2Qlist));
   await dbFunct.updateVisit2(userID,1);
   res.render("Stage2/Stage");}
   else
@@ -222,22 +221,21 @@ app.get("/stage2/ques",sessionChecker,async(req,res)=>{
   const date = new Date();
   if(date.getTime()>Stage2upT&&date.getTime()<Stage2dwT&&userStage===2){
   const index= await dbFunct.getIndex2(userID);
-  stage2Qlist[0]=index.index;
+  const stage2Qlist=JSON.parse(await dbFunct.getStage2QList(userID));
   const question = await dbFunct.getStage2Q(stage2Qlist[index.index]);
   if(index.index>10){
     await dbFunct.updateUserStage(userID,3);
     res.render("Stage1/end")
   }
   else{
-    stage2Qlist[0]=stage2Qlist[0]+1;
-    await dbFunct.updateIndex2(userID,stage2Qlist[0]);
-  res.render("Stage2/stageQue",{question: question.question,qID: question.qID,
+    await dbFunct.updateIndex2(userID,index.index+1);
+  res.render("Stage2/stageQue",{sno:index.index,question: question.question,qID: question.qID,
     option1: question.option1,option2: question.option2,option3: question.option3,option4: question.option4});
   }
   }
 });
 
-app.post("/stage2/ques/submit/:qID",async(req,res)=>{
+app.post("/stage2/ques/submit/:qID",sessionChecker,async(req,res)=>{
 console.log(req.body.user_ans);
 const userID=req.session.user.userID;
 const result=await dbFunct.checkStage2Q(req.params.qID,req.body.user_ans);
@@ -512,6 +510,7 @@ res.render("admin");
     await dbFunct.updateVisit1(userID,0);
     await dbFunct.updateIndex2(userID,1);
     await dbFunct.updateVisit2(userID,0);
+    await dbFunct.delStage2QList(userID);
     const users= await dbFunct.getAllUsers();
     res.render("userTable",{users:users});
    }
