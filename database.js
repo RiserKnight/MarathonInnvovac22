@@ -96,7 +96,14 @@ exports.delStage1Q=async(qID)=>{
 
 exports.delStage2QList=async(userID)=>{
     try {
-        await stage2QList.destroy({where:{userID:userID}})
+        await stage2QList.destroy({where:{userID:userID}});
+    } catch (error) {
+        console.log(error);
+    }
+}
+exports.delStage3Submission=async(userID)=>{
+    try {
+        await usersStage3.destroy({where:{userID:userID}});
     } catch (error) {
         console.log(error);
     }

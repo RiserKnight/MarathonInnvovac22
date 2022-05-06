@@ -72,7 +72,7 @@ function startTimer1(time){
 }
 
 function startTimerLine(time){
-    counterLine = setInterval(timer, 33);
+    counterLine = setInterval(timer, 96);
     function timer(){
         time += 1; //upgrading time value with 1
         time_line.style.width = time + "px"; //increasing width of time_line with px by time value

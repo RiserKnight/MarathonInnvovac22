@@ -114,7 +114,7 @@ function showbutton(index){
     var upload= document.querySelector(".upload");
     
      console.log(index);
-    let upload_btn='<form action="/uploadfile/'+index+'" id="post" method="post" enctype="multipart/form-data"><div class="form-group"><label for="file1">Upload File 1:</label><input type="file" name="file1" id="" required class="form-control"></div><div class="form-group"><label for="file2">Upload File 2:</label><input type="file" name="file2" id="" required class="form-control"></div><div class="form-group"><button class="btn btn-danger btn-block">Upload Files</button></div></form>';
+    let upload_btn='<form action="/uploadfile/'+index+'" id="post" method="post" enctype="multipart/form-data"><div class="form-group"><label for="file1">Upload Code File:</label><input type="file" name="file1" id="" required class="form-control"></div><div class="form-group"><label for="file2">Upload Output File :</label><input type="file" name="file2" id="" required class="form-control"></div><div class="form-group"><button class="btn btn-danger btn-block">Upload Files</button></div></form>';
       upload.innerHTML=upload_btn;
      
 }

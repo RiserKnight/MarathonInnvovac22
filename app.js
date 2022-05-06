@@ -54,22 +54,24 @@ app.use((req, res, next) => {
   next();
 });
 
-var userContent = {userID: 0,userName: ' ',userEmail:' ', status: false};
+
 
 // middleware function to check for logged-in users
-var sessionLogged = (req, res, next) => {
+var sessionLogged = async(req, res, next) => {
   console.log(req.originalUrl);
   if (req.session.user && req.cookies.user_sid) {
- 
+   // await dbFunct.updateLogged(req.session.user.userID,1);
+   // req.session.user.status=true;
       res.redirect("/home");
   } else {
       next();
   }    
 };
-var sessionChecker = (req, res, next) => {
+var sessionChecker = async(req, res, next) => {
   console.log(req.originalUrl);
   if (req.session.user && req.cookies.user_sid) {
- 
+   // await dbFunct.updateLogged(req.session.user.userID,1);
+    //req.session.user.status=true;
       next();
   } else {
       res.redirect("/login");
@@ -107,9 +109,9 @@ const Stage2upT=1651425900000;
 const Stage2dwT=1654104300000;
 const Stage3upT=1651425900000;
 const Stage3dwT=1654104300000;
-const stage3Ques={q1:"false",q2:"false",q3:"false",q4:"false"};
 
-app.get('/', (req, res) => {
+
+app.get('/',sessionChecker, (req, res) => {
   res.redirect("/home");
 });
 
@@ -117,12 +119,8 @@ app.get('/', (req, res) => {
 app.get('/home', (req, res) => {
   if (req.session.user && req.cookies.user_sid) {
     const userID=req.session.user.userID;
-    const status=req.session.user.status;
-  userContent.status = true; 
-  userContent.userID = req.session.user.userID; 
-  userContent.userEmail = req.session.user.userEmail;
-  userContent.userName = req.session.user.userName; 
-  var hour = 3600000
+    const status=req.session.user.status; 
+    var hour = 3600000
     req.session.cookie.expires = new Date(Date.now() + hour)
     console.log("Auto LogOut Time: -"+req.session.cookie.expires.toLocaleString('en-US', {timeZone: "Asia/Kolkata"}));
     console.log("User Session DashBoard "+JSON.stringify(req.session.user));
@@ -274,7 +272,6 @@ res.redirect("/stage2/ques");
             userEmail:Data.email,
             status:Data.status
           }
-          userContent=req.session.user;
           const userNew=await dbFunct.getUser(userID);
           if(!userNew){
             console.log(await dbFunct.storeUser(userID,Data.userName,0,1,1));
@@ -283,9 +280,11 @@ res.redirect("/stage2/ques");
             res.redirect("/home");
           }
           else{
-            if(userNew.loggedin==1)
-            res.redirect("/logout")
+            if(userNew.loggedin===1){
+            console.log("yaha se logout");
+            res.redirect("/logout");}
             else{
+              console.log("Ha yaha");
             await dbFunct.updateLogged(userID,1);
             res.redirect("/home");
           }
@@ -303,13 +302,19 @@ res.redirect("/stage2/ques");
 
     // route for user logout
 app.get('/logout', async(req, res) => {
+  console.log("/logout");
   if (req.session.user && req.cookies.user_sid) {
-  userContent.status = false; 
-  req.session.user.status=false;
-      res.clearCookie('user_sid');
-      await dbFunct.updateLogged(req.session.user.userID,0);
-      userContent = {userID: 0,userName: ' ',userEmail:' ', status: false}; 
-      res.redirect('/');
+  await dbFunct.updateLogged(req.session.user.userID,0);
+  req.session.user={};
+  res.clearCookie('user_sid');
+  req.session.destroy((err) => {
+    if (err) {
+      return console.log(err);
+    }
+    res.redirect("/home");
+  });
+  
+ 
   } else {
       res.redirect('/login');
   }
@@ -359,28 +364,24 @@ app.post('/uploadfile/:qID', uploadMultiple, function (req, res, next) {
       switch (qID) {
         case 0:
           await dbFunct.storeIndex3(userID,1,data1);
-          stage3Ques.q1=true;
           if(output1==data1){
             score=80;
          }
           break;
         case 1:
           await dbFunct.storeIndex3(userID,2,data1);
-          stage3Ques.q2=true;
           if(output2==data1){
             score=50;
          }
           break;
         case 2:
           await dbFunct.storeIndex3(userID,3,data1);
-          stage3Ques.q3=true;
           if(output3==data1){
             score=60;
          }
           break;
         case 3:
           await dbFunct.storeIndex3(userID,4,data1);
-          stage3Ques.q4=true;
           if(output4==data1){
             score=100;
          }
@@ -389,6 +390,7 @@ app.post('/uploadfile/:qID', uploadMultiple, function (req, res, next) {
             console.log("Bekar");
             break;
         }    
+        console.log(score);
         const prevP=await dbFunct.getUserPoints(userID);
         await dbFunct.updateUserPoints(userID,score+prevP);
         res.redirect("/stage3/que");
@@ -417,6 +419,7 @@ app.post('/uploadfile/:qID', uploadMultiple, function (req, res, next) {
   });
   app.get("/stage3/que",sessionChecker,async(req,res)=>{
     const userID=req.session.user.userID;
+    const stage3Ques={q1:"false",q2:"false",q3:"false",q4:"false"};
     const stage3index1= await dbFunct.getIndex3(userID,1);
      if(stage3index1)
      stage3Ques.q1=true;
@@ -511,6 +514,7 @@ res.render("admin");
     await dbFunct.updateIndex2(userID,1);
     await dbFunct.updateVisit2(userID,0);
     await dbFunct.delStage2QList(userID);
+    await dbFunct.delStage3Submission(userID);
     const users= await dbFunct.getAllUsers();
     res.render("userTable",{users:users});
    }
