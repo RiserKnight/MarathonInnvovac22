@@ -4,7 +4,7 @@ module.exports ={
   "development": {
     "username": "postgres",
     "password": process.env.DB_PASS,
-    "database": "Marathon",
+    "database": "Scrimmage",
     "host": "127.0.0.1",
     "dialect": "postgres",
     "logging": false
@@ -12,7 +12,7 @@ module.exports ={
   "test": {
     "username": "postgres",
     "password": process.env.DB_PASS,
-    "database": "Marathon",
+    "database": "Scrimmage",
     "host": "127.0.0.1",
     "dialect": "postgres",
     "logging": false
@@ -20,7 +20,7 @@ module.exports ={
   "production": {
     "username": "postgres",
     "password": process.env.DB_PASS,
-    "database": "Marathon",
+    "database": "Scrimmage",
     "host": "127.0.0.1",
     "dialect": "postgres",
     "logging": false

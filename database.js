@@ -229,6 +229,19 @@ exports.getUsersStage1=async()=>{
         console.log(err);
             }
 }
+exports.getUsersStage2=async()=>{
+    let users=[];
+    try{
+     const demo=await usersStage2.findAll();
+     demo.forEach(user => {
+         users.push(user.dataValues);
+     });
+     return users
+    }
+    catch(err){
+        console.log(err);
+            }
+}
 
 exports.getIndex1=async(userID)=>{
     try {

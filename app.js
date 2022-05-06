@@ -197,7 +197,7 @@ app.get("/stage2",sessionChecker,async(req,res)=>{
   const visit=await dbFunct.getIndex2(userContent.userID);
   if(visit.visit==0&&visit.index<11){
   await dbFunct.updateVisit2(userContent.userID,1);
-  res.render("Stage2/stage");}
+  res.render("Stage2/Stage");}
   else
   res.redirect("/stage2/ques");
   }
@@ -508,6 +508,11 @@ res.render("admin");
      userID=req.body.roll;
      const submissions=await dbFunct.getAllIndex3(userID);
      res.render("stage3Table",{submissions:submissions});
+   }
+   if(btID==11)
+   {
+    const users= await dbFunct.getUsersStage2();
+    res.render("usersStageTable",{stage:"Stage 2",users:users});
    }
       });
     
