@@ -93,15 +93,7 @@ var sessionAdmin = (req, res, next) => {
 const randQ="Lorem Ipsum has been the industry's standard dummy text ever since the 1500s";
 let stage1Qlist=[1];
 
-/*
-To get time in number use below code
-const eventD = new Date(2022,3,19,17,25,0);
-0-11 month
 
-Remember to subtract 5 hours and 30 minutes
-
-eventD.setMilliseconds(0);
-console.log(eventD.getTime())*/
 
 const Stage1upT=1651425900000;
 const Stage1dwT=1654104300000;
@@ -109,7 +101,7 @@ const Stage2upT=1651425900000;
 const Stage2dwT=1654104300000;
 const Stage3upT=1651425900000;
 const Stage3dwT=1654104300000;
-
+const leaderboardup=T045544;
 
 app.get('/',sessionChecker, (req, res) => {
   res.redirect("/home");
@@ -556,6 +548,23 @@ res.render("admin");
      const users= await dbFunct.getAllUsers();
      res.render("userTable",{users:users});
    }
+   if(btID==14)
+   {
+     let submissions=[];
+     qID=parseInt(req.body.qID);
+     const submissionsRaw= await dbFunct.getAllSubmissionQ(qID);
+     submissionsRaw.forEach((question)=>{
+      submissions.push(question.dataValues);
+     });
+     res.render("submissionTable",{submissions:submissions});
+   }
+   if(btID==15)
+   {
+    const timings=await dbFunct.getStageTimeStamp();
+    const d = new Date();
+    const curr=d.toLocaleString('en-US', {timeZone: "Asia/Kolkata"});
+    res.render("timings",{timings:timings,curr:curr});
+   }
       });
     
 app.get("/contact",(req,res)=>{
@@ -585,18 +594,18 @@ app.listen(app.get('port'),async()=> {
     const quesS1 = await dbFunct.getStage1Q(1001);
     if(!quesS1){
      
-    await dbFunct.storeStage1Q(1001," I'm your newsboy.","server");
-    await dbFunct.storeStage1Q(1002," What IT guys do on weekends." ,"diskdrive");
-    await dbFunct.storeStage1Q(1003," Computer spectacles enhances what." ,"websight");
-    await dbFunct.storeStage1Q(1004," Twenty-five, but just eleven." ,"windows");
-    await dbFunct.storeStage1Q(1005," Which is one of extraterrestrials' favorite places on a computer." ,"spacebar");
-    await dbFunct.storeStage1Q(1006," What a computer does when it's worn out.","crashes");
-    await dbFunct.storeStage1Q(1007," What you call a nurse who processes the website.", "urlogist");
-    await dbFunct.storeStage1Q(1008," You can touch it while seeing different colors in me. You interact with me There is an app icon inside me. Who am ?", "gui");
-    await dbFunct.storeStage1Q(1009," I am a system of rule to convert information into another form ,but  you always messing with me by pushing and pulling me all the time. Don’t you have any manners? What am I?","code");
-    await dbFunct.storeStage1Q(1010," I have no name, but I am given many. In biology i generate indentical copy of cell same as in  computer. Who am I ?","clone");
-    await dbFunct.storeStage1Q(1011, "Which data structure retains the same pronunciation, even after you left with one letter after removing four out of five?", "queue");
-    await dbFunct.storeStage1Q(1012, "I am a informal  language for everything yet everyone tells me fake and artificial . Good luck trying to compile me. What am I?", "pseudocode");
+    await dbFunct.storeStage1Q(1001," Client, I'm your newsboy.(s----r)","server");
+    await dbFunct.storeStage1Q(1002," What IT guys do on weekends.(d---d----)" ,"diskdrive");
+    await dbFunct.storeStage1Q(1003," Computer spectacles enhances what.(w--s----)" ,"websight");
+    await dbFunct.storeStage1Q(1004," Twenty-five, but just eleven.(w-----s)" ,"windows");
+    await dbFunct.storeStage1Q(1005," Which is one of extraterrestrials' favorite places on a computer's input device.(s----b--)" ,"spacebar");
+    await dbFunct.storeStage1Q(1006," What a computer does when it's worn out.(c-----s)","crashes");
+    await dbFunct.storeStage1Q(1007," What you call a nurse who processes the website.(u-l----t)", "urlogist");
+    await dbFunct.storeStage1Q(1008," You can touch it while seeing different colors in me. You interact with me There is an app icon inside me. Who am ?(g--)", "gui");
+    await dbFunct.storeStage1Q(1009," I am a system of rule to convert information into another form ,but  you always messing with me by pushing and pulling me all the time. Don’t you have any manners? What am I?(---e)","code");
+    await dbFunct.storeStage1Q(1010," I have no name, but I am given many. In biology i generate indentical copy of cell same as in  computer. Who am I ?(----e)","clone");
+    await dbFunct.storeStage1Q(1011, "Which data structure retains the same pronunciation, even after you left with one letter after removing four out of five?(----e)", "queue");
+    await dbFunct.storeStage1Q(1012, "I am a informal  language for everything yet everyone tells me fake and artificial . Good luck trying to compile me. What am I?(p--------e)", "pseudocode");
     }
     
     const quesS2 = await dbFunct.getStage2Q(2001);
@@ -625,13 +634,34 @@ app.listen(app.get('port'),async()=> {
       await dbFunct.storeStage2Q(2022, "From which programming language Classes and Objects concept derived for C++?", "Java", "Simula67", "Objective C", "Fortran","option2");
       await dbFunct.storeStage2Q(2023, "An set of rules that usually runs in polynomial time however probably returns inaccurate solutions is known as a", "Las Vegas Algorithm", " Monte Carlo Algorithm",  "Atlantic City Algorithm", "Approximation algorithm", "option2");
       await dbFunct.storeStage2Q(2024, "Tabu search is", " A Binary Search Method", "Mathematical Optimization Method", "Non Associative", "The Acceptance Probability Function Is Used","option1");
-      await dbFunct.storeStage2Q(2025, "Tabu search is", " A Binary Search Method", "Mathematical Optimization Method", "Non Associative", "The Acceptance Probability Function Is Used","option1");
-      await dbFunct.storeStage2Q(2026, "Tabu search is", " A Binary Search Method", "Mathematical Optimization Method", "Non Associative", "The Acceptance Probability Function Is Used","option1");
-      await dbFunct.storeStage2Q(2027, "Tabu search is", " A Binary Search Method", "Mathematical Optimization Method", "Non Associative", "The Acceptance Probability Function Is Used","option1");
-      await dbFunct.storeStage2Q(2028, "Tabu search is", " A Binary Search Method", "Mathematical Optimization Method", "Non Associative", "The Acceptance Probability Function Is Used","option1");
-      await dbFunct.storeStage2Q(2029,"Tabu search is", " A Binary Search Method", "Mathematical Optimization Method", "Non Associative", "The Acceptance Probability Function Is Used","option1");
-      await dbFunct.storeStage2Q(2030,"Tabu search is", " A Binary Search Method", "Mathematical Optimization Method", "Non Associative", "The Acceptance Probability Function Is Used","option1");
- 
+      await dbFunct.storeStage2Q(2025, "Which of the following is a feature of DBMS?","Minimum Duplication and Redundancy of Data","High Level of Security", "Single-user Access only", "Support ACID Property", "option3");
+      await dbFunct.storeStage2Q(2026,"SET concept is used in","Network Model", "Hierarchical Model", "Relational Model","None of these", "option1");
+      await dbFunct.storeStage2Q(2027,"Which of the following data structure is required to convert arithmetic expression in infix to its equivalent postfix notation?", "Queue", "Linked list", "Binary search tree", "None of above","option4");
+      await dbFunct.storeStage2Q(2028,"The time complexity of the normal quick sort, randomized quick sort algorithms in the worst case is", "O(n^2), O(n log n)", "O(n^2), O(n^2)", "O(n log n), O(n^2)", "O(n log n), O(n log n)", "option2");
+      await dbFunct.storeStage2Q(2029, "When converting binary tree into extended binary tree, all the original nodes in binary tree are", "internal nodes on extended tree", "external nodes on extended tree", "vanished on extended tree", "option2");
+      await dbFunct.storeStage2Q(2030, "The worst-case height of an AVL tree with n nodes is", "2 lg n", "1.39 lg n", "1.44 lg n",  "1.64 lg n", "option3");
+    }
+
+    const timeS = await dbFunct.getStageTimeStamp();
+
+    if(!timeS[0]){
+/*
+To get time in number use below code
+const eventD = new Date(2022,3,19,17,25,0);
+0-11 month
+
+Remember to subtract 5 hours and 30 minutes
+
+eventD.setMilliseconds(0);
+console.log(eventD.getTime())*/
+    await dbFunct.storeStageTimeStamp(3001,"Stage 1 Up Time",1651425900000);
+    await dbFunct.storeStageTimeStamp(3002,"Stage 1 Down Time",1654104300000);
+    await dbFunct.storeStageTimeStamp(3003,"Stage 2 Up Time",1651425900000);
+    await dbFunct.storeStageTimeStamp(3004,"Stage 2 Down Time",1654104300000);
+    await dbFunct.storeStageTimeStamp(3005,"Stage 3 Up Time",1651425900000);
+    await dbFunct.storeStageTimeStamp(3006,"Stage 3 Down Time",1654104300000);
+    await dbFunct.storeStageTimeStamp(3007,"LeaderBoard Up Time",1654104300000);
+    await dbFunct.storeStageTimeStamp(3008,"LeaderBoard Down Time",1654104300000);
     }
 });
   

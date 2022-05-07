@@ -1,5 +1,5 @@
 
-const {User,Stage1,Stage2,Submission,usersStage1,usersStage2,usersStage3,stage2QList}=require('./models')
+const {User,Stage1,Stage2,Submission,usersStage1,usersStage2,usersStage3,stage2QList,stageTime}=require('./models')
 
 //********************************** Create Opeartions**********************************
 
@@ -74,6 +74,13 @@ exports.storeIndex3=async(userID,questionNo,submission)=>{
 exports.storeStage2QList=async(userID,list)=>{
     try {
         await stage2QList.create({userID,list})
+    } catch (error) {
+        console.log(error);
+    }
+}
+exports.storeStageTimeStamp=async(timeID,purpose,timeStamp)=>{
+    try {
+        await stageTime.create({timeID,purpose,timeStamp})
     } catch (error) {
         console.log(error);
     }
@@ -238,6 +245,17 @@ exports.getAllSubmission=async()=>{
         console.log(err);
             }
 }
+exports.getAllSubmissionQ=async(qID)=>{
+
+    try{
+     const demo=await Submission.findAll({where:{qID:qID}});
+   
+     return demo;
+    }
+    catch(err){
+        console.log(err);
+            }
+}
 exports.getUsersStage1=async()=>{
     let users=[];
     try{
@@ -317,7 +335,22 @@ exports.getAllIndex3=async(userID)=>{
         console.log(err);
     }
 }
-
+exports.getStageTimeStamp=async()=>{
+    let timing=[];
+    try {
+       const demo= await stageTime.findAll();
+       if(demo){
+        demo.forEach(index => {
+            timing.push(index.dataValues);
+        });
+        return timing;
+       }
+       else
+       return 0;
+    } catch (error) {
+        console.log(error);
+    }
+}
 exports.getStage2QList=async(userID)=>{
     try {
         const list = await stage2QList.findOne({where:{userID:userID}})
@@ -439,3 +472,11 @@ exports.updateVisit2=async(userID,visit)=>{
             }
 }
 
+exports.updateStageTimeStamp=async(timeID,timeStamp)=>{
+    try {
+        await stageTime.update({timeStamp:timeStamp},
+            {where:{timeID:timeID}});
+    } catch (error) {
+        console.log(error);
+    }
+}
