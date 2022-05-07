@@ -335,7 +335,7 @@ const output2="9924542";
 
 const output1="57334278020"; 
 
-const output3="19831478";
+const output3="198114078";
 
 const output4="YESYESNO";
 
@@ -585,16 +585,16 @@ app.listen(app.get('port'),async()=> {
     const quesS1 = await dbFunct.getStage1Q(1001);
     if(!quesS1){
      
-    await dbFunct.storeStage1Q(1001," I'm your newsboy","server");
-    await dbFunct.storeStage1Q(1002," what IT guys do on weekends." ,"diskdrive");
-    await dbFunct.storeStage1Q(1003," Computer spectacles enhances what. " ,"websight");
+    await dbFunct.storeStage1Q(1001," I'm your newsboy.","server");
+    await dbFunct.storeStage1Q(1002," What IT guys do on weekends." ,"diskdrive");
+    await dbFunct.storeStage1Q(1003," Computer spectacles enhances what." ,"websight");
     await dbFunct.storeStage1Q(1004," Twenty-five, but just eleven." ,"windows");
     await dbFunct.storeStage1Q(1005," Which is one of extraterrestrials' favorite places on a computer." ,"spacebar");
-    await dbFunct.storeStage1Q(1006," what a computer does when it's worn out.","crashes");
-    await dbFunct.storeStage1Q(1007,"what you call a nurse who processes the website", "urlogist");
+    await dbFunct.storeStage1Q(1006," What a computer does when it's worn out.","crashes");
+    await dbFunct.storeStage1Q(1007," What you call a nurse who processes the website.", "urlogist");
     await dbFunct.storeStage1Q(1008," You can touch it while seeing different colors in me. You interact with me There is an app icon inside me. Who am ?", "gui");
-    await dbFunct.storeStage1Q(1009,"I am a system of rule to convert information into another form ,but  you always messing with me by pushing and pulling me all the time. Don’t you have any manners? What am I?","code");
-    await dbFunct.storeStage1Q(1010," I have no name, but I am given many. In biology i generate indentical copy of cell same as in  computer.who am I ?","clone");
+    await dbFunct.storeStage1Q(1009," I am a system of rule to convert information into another form ,but  you always messing with me by pushing and pulling me all the time. Don’t you have any manners? What am I?","code");
+    await dbFunct.storeStage1Q(1010," I have no name, but I am given many. In biology i generate indentical copy of cell same as in  computer. Who am I ?","clone");
     await dbFunct.storeStage1Q(1011, "Which data structure retains the same pronunciation, even after you left with one letter after removing four out of five?", "queue");
     await dbFunct.storeStage1Q(1012, "I am a informal  language for everything yet everyone tells me fake and artificial . Good luck trying to compile me. What am I?", "pseudocode");
     }
@@ -605,18 +605,18 @@ app.listen(app.get('port'),async()=> {
       await dbFunct.storeStage2Q(2002, "Internet is","complex system", " decentralized system", "dynamic system", "All of above", "option4");
       await dbFunct.storeStage2Q(2003, "Use of Telnet","Remote login", "connecting to TV", "transferring files across net", "All of above", "option1");
       await dbFunct.storeStage2Q(2004, " Another name for LCD", "LED", "TFT", "CRT", "All of above", "option3");
-      await dbFunct.storeStage2Q(2005, " Which of the following are the another names for a PEN Drive", "USBFlashDrive", "GigStick", "ThumbDrive", "All of the above", "option4");
+      await dbFunct.storeStage2Q(2005, " Which of the following is/are the another names for a PEN Drive", "USBFlashDrive", "GigStick", "ThumbDrive", "All of the above", "option4");
       await dbFunct.storeStage2Q(2006, "Which of the following is the device that is constructed with the series of sensors that detects hand and finger motion? ", "Digitizers","Dataglove","joystick","Track ball","option2");
       await dbFunct.storeStage2Q(2007, "Blue Griffon is based on which rendering engine.","Webkit","Presto","Mecko", "Gecko","option4");
-      await dbFunct.storeStage2Q(2008,"which is not the audio element’s attribute","controls","loop","Check","src","option3");
+      await dbFunct.storeStage2Q(2008,"Which is not the audio element’s attribute","controls","loop","Check","src","option3");
       await dbFunct.storeStage2Q(2009," Which language does not support polymorphism but supports classes","Ada","C++","Small talk","java","option1");
       await dbFunct.storeStage2Q(2010, "What shall we use in the case of safe downcast","Static cast","Dynamic Cast","Manual cast","Implicit Cast","option2");
       await dbFunct.storeStage2Q(2011,"Size of class is"," Sum of the size of all inherited variables along with the variables of the same class"," The size of the class is the largest size of the variable of the same class"," Classes in the programming languages do not have any size","Sum of the size of all the variables within a class.","option3");
       await dbFunct.storeStage2Q(2012, "Which of the following does not have body", "interface", "class", "abstract method", "none of the above", "option3");
       await dbFunct.storeStage2Q(2013, "Special software to create a job queue is called", "Linkage editor", "Interpreter", "Spooler", "Drive", "option3");
-      await dbFunct.storeStage2Q(2014, "context switching is a part of ", "interrupt servicing","interrupt handling","polling","spooling", "option2");
+      await dbFunct.storeStage2Q(2014, "Context switching is a part of ", "interrupt servicing","interrupt handling","polling","spooling", "option2");
       await dbFunct.storeStage2Q(2015, "The data blocks of a very large file in the Unix file system are allocated using", "contiguous allocation", "linked allocation", "indexed allocation", "an extension of indexed allocation", "option4");
-      await dbFunct.storeStage2Q(2016, "swap space resides in", "RAM", "Disk", "ROM", "On-chip cache", "option2");
+      await dbFunct.storeStage2Q(2016, "Swap space resides in", "RAM", "Disk", "ROM", "On-chip cache", "option2");
       await dbFunct.storeStage2Q(2017, " When R∩S=φ, then cost of computing R Natural Join S is ", "the same as R×S", "greater than R×S", "less than R×S", "can not say anything", "option1");
       await dbFunct.storeStage2Q(2018, "R (A,B,C,D) is a relation. Which of the following does not have a lossless join dependency preserving BCNF decomposition", "A->B,B->CD", "A->B,B->C,C->D", "AB->C,C->AD", "A->BCD", "option4");
       await dbFunct.storeStage2Q(2019, "If both the functional dependencies : X→Y and Y→X hold for two attributes X and Y then the relationship between X and Y is" , "M:N", "1:M", "1:M", "1:1", "option4");

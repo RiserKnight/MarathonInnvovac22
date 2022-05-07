@@ -303,7 +303,64 @@ body {
     transition: all 0.3s ease;
     border: solid 5px #343a40;
 }
+.wait_box{
+  position: relative;
+  z-index: 2;
+  height: 70px;
+  padding: 0 30px;
+  background: #fff;
+  border-radius: 5px 5px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0px 3px 5px 1px rgba(0,0,0,0.1);
+}
+.wait_box .title{
+  font-size: 20px;
+  font-weight: 600;
+}
 
+.wait_box .timer{
+  color: black;
+  font-weight: bold;
+  background: #cce5ff;
+  border: 1px solid #b8daff;
+  height: 45px;
+  padding: 0 8px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 175px;
+}
+
+.wait_box .timer .time_left_txt{
+  font-weight: 400px;
+  font-size: 17px;
+  user-select: none;
+}
+
+.wait_box .timer .timer_sec{
+  font-size: 18px;
+  font-weight: 500;
+  height: 30px;
+  width: 45px;
+  color: #fff;
+  border-radius: 5px;
+  line-height: 30px;
+  text-align: center;
+  background: #343a40;
+  border: 1px solid #343a40;
+  user-select: none;
+}
+
+.wait_box .time_line{
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  height: 3px;
+  background: rgb(19, 123, 137);
+}
 .info_box .info-title,.wait_box .wait_title{
     height: 60px;
     width: 100%;
@@ -529,3 +586,27 @@ footer button.show{
     transform: scale(0.95);
     transition: all 0.3s ease;
 } 
+
+#stage1submit{
+  width: 20%;
+        background-color: rgb(19, 123, 137);
+        font-size: 16px;
+        color: whitesmoke;
+        padding: 7px 10px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+}
+
+.quit{
+  width: 100%;
+        background-color: rgb(19, 123, 137);
+        font-size: 16px;
+        color: whitesmoke;
+        padding: 7px 10px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+}

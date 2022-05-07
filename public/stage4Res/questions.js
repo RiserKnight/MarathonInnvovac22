@@ -62,7 +62,7 @@ let questions = [
     " '.acb.a.cbcac..b.b..bb.caaacbac.abcab..bbababcb.aa.' <br> Returns: 119 " 
   ],
   inputs:[
-    "1.'..aa..baaabbb.b.a.aaa.aaabba.a.b.abb.b..ba.aaaaaaa.' <br> 2. 'bbaab..bba.a..a.ccccb...abaa.ccaaacbacc.bcaccbccbac..bc.cabbba.bcbc.bbacbcbabcbccaaaaabcccccb.a.ca..cabccabcab.bb.b.caa.bacbbacbcacaaa.aab...ca.c.abb.aacccca'<br> 3.	'............'"
+    "1.'..aa..baaabbb.b.a.aaa.aaabba.a.b.abb.b..ba.aaaaaaa.' <br> 2. '..b...a....b...............a...b.ab..b........b....aa...........b..........ab......b.......a.ba....a.b.......a...bb.....bba.......baaab...ba..b..........b..'<br> 3.	'............'"
   ]
     
   },
