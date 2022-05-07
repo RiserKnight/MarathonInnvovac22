@@ -41,7 +41,7 @@ app.use(session({
   cookie: {
     path: '/',
     httpOnly: true,
-    maxAge: 1*60*60*1000
+    maxAge: 1*60*60*1000*48
   }
 }));
 
@@ -120,9 +120,9 @@ app.get('/home', (req, res) => {
   if (req.session.user && req.cookies.user_sid) {
     const userID=req.session.user.userID;
     const status=req.session.user.status; 
-    var hour = 3600000
+    var hour = 3600000*48;
     req.session.cookie.expires = new Date(Date.now() + hour)
-    console.log("Auto LogOut Time: -"+req.session.cookie.expires.toLocaleString('en-US', {timeZone: "Asia/Kolkata"}));
+    console.log("Auto LogOut Time: "+req.session.cookie.expires.toLocaleString('en-US', {timeZone: "Asia/Kolkata"}));
     console.log("User Session DashBoard "+JSON.stringify(req.session.user));
     res.render("home",{userID:userID,status:status});
   } else {
@@ -282,7 +282,14 @@ res.redirect("/stage2/ques");
           else{
             if(userNew.loggedin===1){
             console.log("yaha se logout");
-            res.redirect("/logout");}
+            req.session.user={};
+            res.clearCookie('user_sid');
+            req.session.destroy((err) => {
+            if (err) {
+             return console.log(err);
+             }
+             res.redirect("/home");
+  });}
             else{
               console.log("Ha yaha");
             await dbFunct.updateLogged(userID,1);
@@ -404,7 +411,7 @@ app.post('/uploadfile/:qID', uploadMultiple, function (req, res, next) {
     const userID=req.session.user.userID;
   const date = new Date();
   const userStage= await dbFunct.getUserCurrStage(userID);
-  if(date.getTime()>Stage1upT&&date.getTime()<Stage1dwT&&userStage===3){
+  if(date.getTime()>Stage3upT&&date.getTime()<Stage3dwT&&userStage===3){
     res.sendFile(__dirname+"/views/Stage3/index1.html");
   }
   else{
@@ -419,6 +426,9 @@ app.post('/uploadfile/:qID', uploadMultiple, function (req, res, next) {
   });
   app.get("/stage3/que",sessionChecker,async(req,res)=>{
     const userID=req.session.user.userID;
+    const date = new Date();
+    const userStage= await dbFunct.getUserCurrStage(userID);
+    if(date.getTime()>Stage3upT&&date.getTime()<Stage3dwT&&userStage===3){
     const stage3Ques={q1:"false",q2:"false",q3:"false",q4:"false"};
     const stage3index1= await dbFunct.getIndex3(userID,1);
      if(stage3index1)
@@ -436,6 +446,7 @@ app.post('/uploadfile/:qID', uploadMultiple, function (req, res, next) {
      if(stage3index4)
      stage3Ques.q4=true;
     res.render("Stage3/index2",stage3Ques);
+    }
   });
 
   app.get("/admin",sessionAdmin,(req,res)=>{
@@ -538,6 +549,13 @@ res.render("admin");
     const users= await dbFunct.getUsersStage2();
     res.render("usersStageTable",{stage:"Stage 2",users:users});
   }
+  if(btID==13)
+   {
+     userID=parseInt(req.body.roll);
+     await dbFunct.updateLogged(userID,0);
+     const users= await dbFunct.getAllUsers();
+     res.render("userTable",{users:users});
+   }
       });
     
 app.get("/contact",(req,res)=>{
