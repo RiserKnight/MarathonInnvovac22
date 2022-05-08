@@ -16,6 +16,7 @@ const session = require('express-session');
 const axios = require('axios');
 const { load } = require("nodemon/lib/config");
 const _ = require('lodash');
+const { identity } = require("lodash");
 
 require('dotenv').config();
 
@@ -90,18 +91,8 @@ var sessionAdmin = (req, res, next) => {
       res.redirect("/login");
   }    
 };
-const randQ="Lorem Ipsum has been the industry's standard dummy text ever since the 1500s";
+
 let stage1Qlist=[1];
-
-
-
-const Stage1upT=1651425900000;
-const Stage1dwT=1654104300000;
-const Stage2upT=1651425900000;
-const Stage2dwT=1654104300000;
-const Stage3upT=1651425900000;
-const Stage3dwT=1654104300000;
-const leaderboardup=T045544;
 
 app.get('/',sessionChecker, (req, res) => {
   res.redirect("/home");
@@ -124,8 +115,20 @@ app.get('/home', (req, res) => {
 
 app.get("/stage1",sessionChecker,async(req,res)=>{
   const userID=req.session.user.userID;
-  const date = new Date();
   const userStage= await dbFunct.getUserCurrStage(userID);
+  const Stage1upT=await dbFunct.getStageTimeStampS(3001);
+  const Stage1dwT=await dbFunct.getStageTimeStampS(3002);
+ 
+  const d = new Date();
+  d.setTime(Stage1upT);
+  const up=d.toLocaleString('en-US', {timeZone: "Asia/Kolkata"});
+  d.setTime(Stage1dwT);
+  const dw=d.toLocaleString('en-US', {timeZone: "Asia/Kolkata"});
+  
+  console.log("Stage 1 Up Time: "+up);
+  console.log("Stage 1 Down Time: "+dw);
+
+  const date = new Date();
   if(date.getTime()>Stage1upT&&date.getTime()<Stage1dwT&&userStage===1){
   stage1Qlist = await qFunct.stage1Qlist();
   console.log("There should not be any space - _ between letters");
@@ -136,20 +139,19 @@ app.get("/stage1",sessionChecker,async(req,res)=>{
   else
   res.redirect("/stage1/ques");
   }
-  else{
-    const d = new Date();
-    d.setTime(Stage1upT);
-    const up=d.toLocaleString('en-US', {timeZone: "Asia/Kolkata"});
-    d.setTime(Stage1dwT);
-    const dw=d.toLocaleString('en-US', {timeZone: "Asia/Kolkata"});
-    res.render("EventTime",{up:up,dw:dw})
-  }
+  else if(date.getTime()<Stage1upT)
+  res.render("beforeTime",{up:Stage1upT})
+  else
+  res.render("afterTime");
   });
 
 app.get("/stage1/ques",sessionChecker,async(req,res)=>{
   const userID=req.session.user.userID;
   const userStage= await dbFunct.getUserCurrStage(userID);
   const date = new Date();
+  const Stage1upT=await dbFunct.getStageTimeStampS(3001);
+  const Stage1dwT=await dbFunct.getStageTimeStampS(3002);
+
   if(date.getTime()>Stage1upT&&date.getTime()<Stage1dwT&&userStage===1){
   const index= await dbFunct.getIndex1(userID);
   const question = await dbFunct.getStage1Q(stage1Qlist[index.index]);
@@ -184,6 +186,18 @@ app.get("/stage1/ques",sessionChecker,async(req,res)=>{
 app.get("/stage2",sessionChecker,async(req,res)=>{
   const userID=req.session.user.userID;
   const userStage= await dbFunct.getUserCurrStage(userID);
+  const Stage2upT=await dbFunct.getStageTimeStampS(3003);
+  const Stage2dwT=await dbFunct.getStageTimeStampS(3004);
+
+  const d = new Date();
+  d.setTime(Stage2upT);
+  const up=d.toLocaleString('en-US', {timeZone: "Asia/Kolkata"});
+  d.setTime(Stage2dwT);
+  const dw=d.toLocaleString('en-US', {timeZone: "Asia/Kolkata"});
+  
+  console.log("Stage 2 Up Time: "+up);
+  console.log("Stage 2 Down Time: "+dw);
+
   const date = new Date();
   if(date.getTime()>Stage2upT&&date.getTime()<Stage2dwT&&userStage===2){
   const visit=await dbFunct.getIndex2(userID);
@@ -195,20 +209,18 @@ app.get("/stage2",sessionChecker,async(req,res)=>{
   else
   res.redirect("/stage2/ques");
   }
-  else{
-    const d = new Date();
-    d.setTime(Stage2upT);
-    const up=d.toLocaleString('en-US', {timeZone: "Asia/Kolkata"});
-    d.setTime(Stage2dwT);
-    const dw=d.toLocaleString('en-US', {timeZone: "Asia/Kolkata"});
-    res.render("EventTime",{up:up,dw:dw})
-  }
+  else if(date.getTime()<Stage2upT)
+  res.render("beforeTime",{up:Stage2upT})
+  else
+  res.render("afterTime");
   });
 
 app.get("/stage2/ques",sessionChecker,async(req,res)=>{
   const userID=req.session.user.userID;
   const userStage= await dbFunct.getUserCurrStage(userID);
   const date = new Date();
+  const Stage2upT=await dbFunct.getStageTimeStampS(3003);
+  const Stage2dwT=await dbFunct.getStageTimeStampS(3004);
   if(date.getTime()>Stage2upT&&date.getTime()<Stage2dwT&&userStage===2){
   const index= await dbFunct.getIndex2(userID);
   const stage2Qlist=JSON.parse(await dbFunct.getStage2QList(userID));
@@ -400,17 +412,29 @@ app.post('/uploadfile/:qID', uploadMultiple, function (req, res, next) {
  
 
   app.get("/stage3",sessionChecker,async(req,res)=>{
-    const userID=req.session.user.userID;
-  const date = new Date();
+  const userID=req.session.user.userID;
   const userStage= await dbFunct.getUserCurrStage(userID);
+  const Stage3upT=await dbFunct.getStageTimeStampS(3005);
+  const Stage3dwT=await dbFunct.getStageTimeStampS(3006);
+  
+  const d = new Date();
+  d.setTime(Stage3upT);
+  const up=d.toLocaleString('en-US', {timeZone: "Asia/Kolkata"});
+  d.setTime(Stage3dwT);
+  const dw=d.toLocaleString('en-US', {timeZone: "Asia/Kolkata"});
+  console.log("Stage 3 Up Time: "+up);
+  console.log("Stage 3 Down Time: "+dw);
+
+
+  const date = new Date();
   if(date.getTime()>Stage3upT&&date.getTime()<Stage3dwT&&userStage===3){
     res.sendFile(__dirname+"/views/Stage3/index1.html");
   }
   else{
     const d = new Date();
-    d.setTime(Stage1upT);
+    d.setTime(Stage3upT);
     const up=d.toLocaleString('en-US', {timeZone: "Asia/Kolkata"});
-    d.setTime(Stage1dwT);
+    d.setTime(Stage3dwT);
     const dw=d.toLocaleString('en-US', {timeZone: "Asia/Kolkata"});
     res.render("EventTime",{up:up,dw:dw})
   }
@@ -418,8 +442,11 @@ app.post('/uploadfile/:qID', uploadMultiple, function (req, res, next) {
   });
   app.get("/stage3/que",sessionChecker,async(req,res)=>{
     const userID=req.session.user.userID;
-    const date = new Date();
     const userStage= await dbFunct.getUserCurrStage(userID);
+    const Stage3upT=await dbFunct.getStageTimeStampS(3005);
+    const Stage3dwT=await dbFunct.getStageTimeStampS(3006);
+
+    const date = new Date();
     if(date.getTime()>Stage3upT&&date.getTime()<Stage3dwT&&userStage===3){
     const stage3Ques={q1:"false",q2:"false",q3:"false",q4:"false"};
     const stage3index1= await dbFunct.getIndex3(userID,1);
@@ -565,6 +592,17 @@ res.render("admin");
     const curr=d.toLocaleString('en-US', {timeZone: "Asia/Kolkata"});
     res.render("timings",{timings:timings,curr:curr});
    }
+   if(btID==16)
+   {
+    const timeID=parseInt(req.body.timeID);
+    const timeStamp=parseInt(req.body.timeStamp); 
+    await dbFunct.updateStageTimeStamp(timeID,timeStamp);
+    const timings=await dbFunct.getStageTimeStamp();
+    const d = new Date();
+    const curr=d.toLocaleString('en-US', {timeZone: "Asia/Kolkata"});
+    res.render("timings",{timings:timings,curr:curr});
+   }
+   
       });
     
 app.get("/contact",(req,res)=>{
@@ -572,8 +610,24 @@ app.get("/contact",(req,res)=>{
 });
 
 app.get("/leaderboard",async(req,res)=>{
+  const LeaderboarDupT=await dbFunct.getStageTimeStampS(3007);
+  const LeaderboarDdwT=await dbFunct.getStageTimeStampS(3008);
+
+  const d = new Date();
+  d.setTime(LeaderboarDupT);
+  const up=d.toLocaleString('en-US', {timeZone: "Asia/Kolkata"});
+  d.setTime(LeaderboarDdwT);
+  const dw=d.toLocaleString('en-US', {timeZone: "Asia/Kolkata"});
+  console.log("Leaderboard Up Time: "+up);
+  console.log("Leaderboard Down Time: "+dw);
+
+  const date = new Date();
+  if(date.getTime()>LeaderboarDupT&&date.getTime()<LeaderboarDdwT){
 const users = await dbFunct.getAllUsers();
 res.render("leaderboard",{users:users});
+}
+else
+res.render("leaderBoardDown");
 });
 
 // route for handling 404 requests(unavailable routes)
@@ -638,7 +692,7 @@ app.listen(app.get('port'),async()=> {
       await dbFunct.storeStage2Q(2026,"SET concept is used in","Network Model", "Hierarchical Model", "Relational Model","None of these", "option1");
       await dbFunct.storeStage2Q(2027,"Which of the following data structure is required to convert arithmetic expression in infix to its equivalent postfix notation?", "Queue", "Linked list", "Binary search tree", "None of above","option4");
       await dbFunct.storeStage2Q(2028,"The time complexity of the normal quick sort, randomized quick sort algorithms in the worst case is", "O(n^2), O(n log n)", "O(n^2), O(n^2)", "O(n log n), O(n^2)", "O(n log n), O(n log n)", "option2");
-      await dbFunct.storeStage2Q(2029, "When converting binary tree into extended binary tree, all the original nodes in binary tree are", "internal nodes on extended tree", "external nodes on extended tree", "vanished on extended tree", "option2");
+      await dbFunct.storeStage2Q(2029, "When converting binary tree into extended binary tree, all the original nodes in binary tree are", "internal nodes on extended tree", "external nodes on extended tree", "vanished on extended tree","none", "option2");
       await dbFunct.storeStage2Q(2030, "The worst-case height of an AVL tree with n nodes is", "2 lg n", "1.39 lg n", "1.44 lg n",  "1.64 lg n", "option3");
     }
 
@@ -647,11 +701,12 @@ app.listen(app.get('port'),async()=> {
     if(!timeS[0]){
 /*
 To get time in number use below code
-const eventD = new Date(2022,3,19,17,25,0);
+
 0-11 month
 
 Remember to subtract 5 hours and 30 minutes
 
+const eventD = new Date(2022,4,8,4,30,0);
 eventD.setMilliseconds(0);
 console.log(eventD.getTime())*/
     await dbFunct.storeStageTimeStamp(3001,"Stage 1 Up Time",1651425900000);

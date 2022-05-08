@@ -338,13 +338,25 @@ exports.getAllIndex3=async(userID)=>{
 exports.getStageTimeStamp=async()=>{
     let timing=[];
     try {
-       const demo= await stageTime.findAll();
+       const demo= await stageTime.findAll({order:[["timeID","ASC"]]});
        if(demo){
         demo.forEach(index => {
             timing.push(index.dataValues);
         });
         return timing;
        }
+       else
+       return 0;
+    } catch (error) {
+        console.log(error);
+    }
+}
+exports.getStageTimeStampS=async(timeID)=>{
+  
+    try {
+       const demo= await stageTime.findOne({where:{timeID:timeID}});
+       if(demo)
+        return demo.dataValues.timeStamp;
        else
        return 0;
     } catch (error) {
