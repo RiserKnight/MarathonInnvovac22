@@ -13,11 +13,11 @@ const user_ans=document.getElementById("user_ans");
 window.onload = ()=>{
     
     quiz_box.classList.add("activeQuiz"); //show quiz box
-    startTimer(15); //calling startTimer function
+    startTimer(30); //calling startTimer function
     startTimerLine(0); //calling startTimerLine function
 }
 
-let timeValue =  15;
+let timeValue =  30;
 let counter;
 let counterLine;
 let widthValue = 0;
@@ -63,7 +63,7 @@ function startTimer(time){
 }
 
 function startTimerLine(time){
-    counterLine = setInterval(timer, 29);
+    counterLine = setInterval(timer, 56);
     function timer(){
         time += 1; //upgrading time value with 1
         time_line.style.width = time + "px"; //increasing width of time_line with px by time value

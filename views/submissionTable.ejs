@@ -60,7 +60,11 @@
                                         <h5><%=question.userID%></h5>
                                     </td>
                                     <td>
-                                        <h5><%=question.timeStamp%></h5>
+                                        <%const d = new Date();%>
+                                        <%d.setTime(question.timeStamp);%>
+                                        
+    <%const up=d.toLocaleString('en-US', {timeZone: "Asia/Kolkata"});%>
+                                        <h5><%=up%></h5>
                                     </td>
                                     <td>
                                         <h5><%=question.fPoint%></h5>

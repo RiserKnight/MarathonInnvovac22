@@ -140,7 +140,7 @@ app.get("/stage1",sessionChecker,async(req,res)=>{
   res.redirect("/stage1/ques");
   }
   else if(date.getTime()<Stage1upT)
-  res.render("beforeTime",{up:Stage1upT})
+  res.render("beforeTime",{up:Stage1upT,text:"Stage 1"})
   else
   res.render("afterTime");
   });
@@ -174,7 +174,7 @@ app.get("/stage1/ques",sessionChecker,async(req,res)=>{
    console.log("Submit Answer: "+ans);
    const result=await dbFunct.checkStage1Q(req.params.qID,ans);
    let x=0; 
-   if(result){x=10;}
+   if(result){x=15;}
    const curr = new Date();
    await dbFunct.storeSubmission(req.params.qID,userID,curr.getTime(),x,ans,1);
    console.log("Points: "+x);
@@ -210,7 +210,7 @@ app.get("/stage2",sessionChecker,async(req,res)=>{
   res.redirect("/stage2/ques");
   }
   else if(date.getTime()<Stage2upT)
-  res.render("beforeTime",{up:Stage2upT})
+  res.render("beforeTime",{up:Stage2upT,text:"Stage 2"})
   else
   res.render("afterTime");
   });
@@ -227,7 +227,7 @@ app.get("/stage2/ques",sessionChecker,async(req,res)=>{
   const question = await dbFunct.getStage2Q(stage2Qlist[index.index]);
   if(index.index>10){
     await dbFunct.updateUserStage(userID,3);
-    res.render("Stage1/end")
+    res.render("Stage2/end")
   }
   else{
     await dbFunct.updateIndex2(userID,index.index+1);
@@ -242,7 +242,7 @@ console.log(req.body.user_ans);
 const userID=req.session.user.userID;
 const result=await dbFunct.checkStage2Q(req.params.qID,req.body.user_ans);
 let x=0; 
-if(result){x=15;}
+if(result){x=10;}
 const curr = new Date();
 await dbFunct.storeSubmission(req.params.qID,userID,curr.getTime(),x,req.body.user_ans,2);
 console.log("Points: "+x);
@@ -430,14 +430,10 @@ app.post('/uploadfile/:qID', uploadMultiple, function (req, res, next) {
   if(date.getTime()>Stage3upT&&date.getTime()<Stage3dwT&&userStage===3){
     res.sendFile(__dirname+"/views/Stage3/index1.html");
   }
-  else{
-    const d = new Date();
-    d.setTime(Stage3upT);
-    const up=d.toLocaleString('en-US', {timeZone: "Asia/Kolkata"});
-    d.setTime(Stage3dwT);
-    const dw=d.toLocaleString('en-US', {timeZone: "Asia/Kolkata"});
-    res.render("EventTime",{up:up,dw:dw})
-  }
+  else if(date.getTime()<Stage3upT)
+  res.render("beforeTime",{up:Stage3upT,text:"Stage 3"})
+  else
+  res.render("afterTime");
    
   });
   app.get("/stage3/que",sessionChecker,async(req,res)=>{
@@ -602,7 +598,26 @@ res.render("admin");
     const curr=d.toLocaleString('en-US', {timeZone: "Asia/Kolkata"});
     res.render("timings",{timings:timings,curr:curr});
    }
-   
+   if(btID==17)
+   {
+    const userID=parseInt(req.body.userID);
+    const points=parseInt(req.body.points); 
+    const prevP=await dbFunct.getUserPoints(userID);
+    await dbFunct.updateUserPoints(userID,prevP-points);
+    const users= await dbFunct.getAllUsers();
+    res.render("userTable",{users:users});
+   }
+   if(btID==18)
+   {
+    const userID=parseInt(req.body.userID);
+    const points=parseInt(req.body.points);  
+    const prevP=await dbFunct.getUserPoints(userID);
+    await dbFunct.updateUserPoints(userID,prevP+points);
+    const users= await dbFunct.getAllUsers();
+    res.render("userTable",{users:users});
+ 
+
+   }
       });
     
 app.get("/contact",(req,res)=>{
@@ -626,6 +641,8 @@ app.get("/leaderboard",async(req,res)=>{
 const users = await dbFunct.getAllUsers();
 res.render("leaderboard",{users:users});
 }
+else if(date.getTime()<LeaderboarDupT)
+res.render("beforeTime",{up:LeaderboarDupT,text:"Leaderboard"})
 else
 res.render("leaderBoardDown");
 });
@@ -651,10 +668,10 @@ app.listen(app.get('port'),async()=> {
     await dbFunct.storeStage1Q(1001," Client, I'm your newsboy.(s----r)","server");
     await dbFunct.storeStage1Q(1002," What IT guys do on weekends.(d---d----)" ,"diskdrive");
     await dbFunct.storeStage1Q(1003," Computer spectacles enhances what.(w--s----)" ,"websight");
-    await dbFunct.storeStage1Q(1004," Twenty-five, but just eleven.(w-----s)" ,"windows");
+    await dbFunct.storeStage1Q(1004," Thirty-Six, but just eleven.(w-----s)" ,"windows");
     await dbFunct.storeStage1Q(1005," Which is one of extraterrestrials' favorite places on a computer's input device.(s----b--)" ,"spacebar");
     await dbFunct.storeStage1Q(1006," What a computer does when it's worn out.(c-----s)","crashes");
-    await dbFunct.storeStage1Q(1007," What you call a nurse who processes the website.(u-l----t)", "urlogist");
+    await dbFunct.storeStage1Q(1007," The more you code the more of me there is what am i.(-u-)", "bug");
     await dbFunct.storeStage1Q(1008," You can touch it while seeing different colors in me. You interact with me There is an app icon inside me. Who am ?(g--)", "gui");
     await dbFunct.storeStage1Q(1009," I am a system of rule to convert information into another form ,but  you always messing with me by pushing and pulling me all the time. Don’t you have any manners? What am I?(---e)","code");
     await dbFunct.storeStage1Q(1010," I have no name, but I am given many. In biology i generate indentical copy of cell same as in  computer. Who am I ?(----e)","clone");
@@ -667,20 +684,20 @@ app.listen(app.get('port'),async()=> {
       await dbFunct.storeStage2Q(2001,"Where is the BIOS stored?", "Hard Disk", "RAM", "Flash Memory Chip", "Any of above", "option3");
       await dbFunct.storeStage2Q(2002, "Internet is","complex system", " decentralized system", "dynamic system", "All of above", "option4");
       await dbFunct.storeStage2Q(2003, "Use of Telnet","Remote login", "connecting to TV", "transferring files across net", "All of above", "option1");
-      await dbFunct.storeStage2Q(2004, " Another name for LCD", "LED", "TFT", "CRT", "All of above", "option3");
-      await dbFunct.storeStage2Q(2005, " Which of the following is/are the another names for a PEN Drive", "USBFlashDrive", "GigStick", "ThumbDrive", "All of the above", "option4");
+      await dbFunct.storeStage2Q(2004, "Another name for LCD", "LED", "TFT", "CRT", "All of above", "option3");
+      await dbFunct.storeStage2Q(2005, "Which of the following is/are the another names for a PEN Drive", "USBFlashDrive", "GigStick", "ThumbDrive", "All of the above", "option4");
       await dbFunct.storeStage2Q(2006, "Which of the following is the device that is constructed with the series of sensors that detects hand and finger motion? ", "Digitizers","Dataglove","joystick","Track ball","option2");
       await dbFunct.storeStage2Q(2007, "Blue Griffon is based on which rendering engine.","Webkit","Presto","Mecko", "Gecko","option4");
-      await dbFunct.storeStage2Q(2008,"Which is not the audio element’s attribute","controls","loop","Check","src","option3");
-      await dbFunct.storeStage2Q(2009," Which language does not support polymorphism but supports classes","Ada","C++","Small talk","java","option1");
+      await dbFunct.storeStage2Q(2008, "Which is not the audio element’s attribute","controls","loop","Check","src","option3");
+      await dbFunct.storeStage2Q(2009, "Which language does not support polymorphism but supports classes","Ada","C++","Small talk","java","option1");
       await dbFunct.storeStage2Q(2010, "What shall we use in the case of safe downcast","Static cast","Dynamic Cast","Manual cast","Implicit Cast","option2");
-      await dbFunct.storeStage2Q(2011,"Size of class is"," Sum of the size of all inherited variables along with the variables of the same class"," The size of the class is the largest size of the variable of the same class"," Classes in the programming languages do not have any size","Sum of the size of all the variables within a class.","option3");
+      await dbFunct.storeStage2Q(2011, "Size of class is"," Sum of the size of all inherited variables along with the variables of the same class"," The size of the class is the largest size of the variable of the same class"," Classes in the programming languages do not have any size","Sum of the size of all the variables within a class.","option3");
       await dbFunct.storeStage2Q(2012, "Which of the following does not have body", "interface", "class", "abstract method", "none of the above", "option3");
       await dbFunct.storeStage2Q(2013, "Special software to create a job queue is called", "Linkage editor", "Interpreter", "Spooler", "Drive", "option3");
       await dbFunct.storeStage2Q(2014, "Context switching is a part of ", "interrupt servicing","interrupt handling","polling","spooling", "option2");
       await dbFunct.storeStage2Q(2015, "The data blocks of a very large file in the Unix file system are allocated using", "contiguous allocation", "linked allocation", "indexed allocation", "an extension of indexed allocation", "option4");
       await dbFunct.storeStage2Q(2016, "Swap space resides in", "RAM", "Disk", "ROM", "On-chip cache", "option2");
-      await dbFunct.storeStage2Q(2017, " When R∩S=φ, then cost of computing R Natural Join S is ", "the same as R×S", "greater than R×S", "less than R×S", "can not say anything", "option1");
+      await dbFunct.storeStage2Q(2017, "When R∩S=φ, then cost of computing R Natural Join S is ", "the same as R×S", "greater than R×S", "less than R×S", "can not say anything", "option1");
       await dbFunct.storeStage2Q(2018, "R (A,B,C,D) is a relation. Which of the following does not have a lossless join dependency preserving BCNF decomposition", "A->B,B->CD", "A->B,B->C,C->D", "AB->C,C->AD", "A->BCD", "option4");
       await dbFunct.storeStage2Q(2019, "If both the functional dependencies : X→Y and Y→X hold for two attributes X and Y then the relationship between X and Y is" , "M:N", "1:M", "1:M", "1:1", "option4");
       await dbFunct.storeStage2Q(2020, "In tuple relational calculus P1 AND P2 is equivalent to" , "(¬P1OR¬P2)", "¬(P1OR¬P2)", "¬(¬P1OR P2)", "¬(¬P1OR¬P2)", "option4");
@@ -689,9 +706,9 @@ app.listen(app.get('port'),async()=> {
       await dbFunct.storeStage2Q(2023, "An set of rules that usually runs in polynomial time however probably returns inaccurate solutions is known as a", "Las Vegas Algorithm", " Monte Carlo Algorithm",  "Atlantic City Algorithm", "Approximation algorithm", "option2");
       await dbFunct.storeStage2Q(2024, "Tabu search is", " A Binary Search Method", "Mathematical Optimization Method", "Non Associative", "The Acceptance Probability Function Is Used","option1");
       await dbFunct.storeStage2Q(2025, "Which of the following is a feature of DBMS?","Minimum Duplication and Redundancy of Data","High Level of Security", "Single-user Access only", "Support ACID Property", "option3");
-      await dbFunct.storeStage2Q(2026,"SET concept is used in","Network Model", "Hierarchical Model", "Relational Model","None of these", "option1");
-      await dbFunct.storeStage2Q(2027,"Which of the following data structure is required to convert arithmetic expression in infix to its equivalent postfix notation?", "Queue", "Linked list", "Binary search tree", "None of above","option4");
-      await dbFunct.storeStage2Q(2028,"The time complexity of the normal quick sort, randomized quick sort algorithms in the worst case is", "O(n^2), O(n log n)", "O(n^2), O(n^2)", "O(n log n), O(n^2)", "O(n log n), O(n log n)", "option2");
+      await dbFunct.storeStage2Q(2026, "SET concept is used in","Network Model", "Hierarchical Model", "Relational Model","None of these", "option1");
+      await dbFunct.storeStage2Q(2027, "Which of the following data structure is required to convert arithmetic expression in infix to its equivalent postfix notation?", "Queue", "Linked list", "Binary search tree", "None of above","option4");
+      await dbFunct.storeStage2Q(2028, "The time complexity of the normal quick sort, randomized quick sort algorithms in the worst case is", "O(n^2), O(n log n)", "O(n^2), O(n^2)", "O(n log n), O(n^2)", "O(n log n), O(n log n)", "option2");
       await dbFunct.storeStage2Q(2029, "When converting binary tree into extended binary tree, all the original nodes in binary tree are", "internal nodes on extended tree", "external nodes on extended tree", "vanished on extended tree","none", "option2");
       await dbFunct.storeStage2Q(2030, "The worst-case height of an AVL tree with n nodes is", "2 lg n", "1.39 lg n", "1.44 lg n",  "1.64 lg n", "option3");
     }
@@ -709,14 +726,14 @@ Remember to subtract 5 hours and 30 minutes
 const eventD = new Date(2022,4,8,4,30,0);
 eventD.setMilliseconds(0);
 console.log(eventD.getTime())*/
-    await dbFunct.storeStageTimeStamp(3001,"Stage 1 Up Time",1651425900000);
-    await dbFunct.storeStageTimeStamp(3002,"Stage 1 Down Time",1654104300000);
-    await dbFunct.storeStageTimeStamp(3003,"Stage 2 Up Time",1651425900000);
-    await dbFunct.storeStageTimeStamp(3004,"Stage 2 Down Time",1654104300000);
-    await dbFunct.storeStageTimeStamp(3005,"Stage 3 Up Time",1651425900000);
-    await dbFunct.storeStageTimeStamp(3006,"Stage 3 Down Time",1654104300000);
-    await dbFunct.storeStageTimeStamp(3007,"LeaderBoard Up Time",1654104300000);
-    await dbFunct.storeStageTimeStamp(3008,"LeaderBoard Down Time",1654104300000);
+    await dbFunct.storeStageTimeStamp(3001,"Stage 1 Up Time",1652272200000);
+    await dbFunct.storeStageTimeStamp(3002,"Stage 1 Down Time",1652274000000);
+    await dbFunct.storeStageTimeStamp(3003,"Stage 2 Up Time",1652275800000);
+    await dbFunct.storeStageTimeStamp(3004,"Stage 2 Down Time",1652277600000);
+    await dbFunct.storeStageTimeStamp(3005,"Stage 3 Up Time",1652340600000);
+    await dbFunct.storeStageTimeStamp(3006,"Stage 3 Down Time",1652351400000);
+    await dbFunct.storeStageTimeStamp(3007,"LeaderBoard Up Time",1652293800000);
+    await dbFunct.storeStageTimeStamp(3008,"LeaderBoard Down Time",1654972200000);
     }
 });
   
