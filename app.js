@@ -540,13 +540,14 @@ res.render("admin");
    }
    if(btID==9)
    {
-     userID=parseInt(req.body.roll);
-     await dbFunct.updateUserPoints(userID,0);
-     await dbFunct.updateUserStage(userID,1);
-     await dbFunct.updateIndex1(userID,1);
+    userID=parseInt(req.body.roll);
+    await dbFunct.updateUserPoints(userID,0);
+    await dbFunct.updateUserStage(userID,1);
+    await dbFunct.updateIndex1(userID,1);
     await dbFunct.updateVisit1(userID,0);
     await dbFunct.updateIndex2(userID,1);
     await dbFunct.updateVisit2(userID,0);
+    await dbFunct.delStage1QList(userID);
     await dbFunct.delStage2QList(userID);
     await dbFunct.delStage3Submission(userID);
     const users= await dbFunct.getAllUsers();
@@ -623,9 +624,20 @@ res.render("admin");
     await dbFunct.updateUserPoints(userID,prevP+points);
     const users= await dbFunct.getAllUsers();
     res.render("userTable",{users:users});
- 
-
    }
+   if(btID==19)
+   {
+     userID=parseInt(req.body.userID);
+     await dbFunct.delSubmission(userID);
+     let submissions=[];
+     const submissionsRaw= await dbFunct.getAllSubmission();
+     submissionsRaw.forEach((question)=>{
+      submissions.push(question.dataValues);
+     });
+     res.render("submissionTable",{submissions:submissions});
+   }
+
+   
       });
     
 app.get("/contact",(req,res)=>{

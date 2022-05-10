@@ -107,6 +107,13 @@ exports.delStage1Q=async(qID)=>{
         }
     return "Question deleted "+ qID+" for Stage1";
 }
+exports.delStage1QList=async(userID)=>{
+    try {
+        await stage1QList.destroy({where:{userID:userID}});
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 exports.delStage2QList=async(userID)=>{
     try {
@@ -118,6 +125,13 @@ exports.delStage2QList=async(userID)=>{
 exports.delStage3Submission=async(userID)=>{
     try {
         await usersStage3.destroy({where:{userID:userID}});
+    } catch (error) {
+        console.log(error);
+    }
+}
+exports.delSubmission=async(userID)=>{
+    try {
+        await Submission.destroy({where:{userID:userID}});
     } catch (error) {
         console.log(error);
     }
