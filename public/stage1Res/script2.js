@@ -16,7 +16,7 @@ window.onload = ()=>{
     quiz_box.classList.add("activeQuiz"); //show quiz box
     startTimer(90); //calling startTimer function
     startTimerLine(0); //calling startTimerLine function
-
+    timeout = setTimeout(ansSubmit, 90000);
 }
 
 submitBtn.onclick=()=>{
@@ -36,6 +36,9 @@ let widthValue = 0;
 
 const bottom_ques_counter = document.querySelector("footer .total_que");
 
+function ansSubmit(){
+document.getElementById("stage1ques").submit();    
+}
 function startTimer(time){
     counter = setInterval(timer, 1000);
     function timer(){
@@ -48,7 +51,6 @@ function startTimer(time){
         if(time < 0){ //if timer is less than 0
             clearInterval(counter); //clear counter
             timeText.textContent = "Time Off"; //change the time text to time off
-            document.getElementById("stage1ques").submit();    
         }
     
     }
@@ -64,8 +66,7 @@ function startTimer1(time){
         }
         if(time < 0){ //if timer is less than 0
             clearInterval(counter); //clear counter
-            timeText.textContent = "Time Off"; //change the time text to time off
-            document.getElementById("stage1ques").submit();    
+            timeText.textContent = "Time Off"; //change the time text to time off 
         }
     
     }

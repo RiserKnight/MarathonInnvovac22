@@ -59,6 +59,7 @@ app.use((req, res, next) => {
 
 // middleware function to check for logged-in users
 var sessionLogged = async(req, res, next) => {
+  console.log("******************************");
   console.log(req.originalUrl);
   if (req.session.user && req.cookies.user_sid) {
    // await dbFunct.updateLogged(req.session.user.userID,1);
@@ -69,6 +70,7 @@ var sessionLogged = async(req, res, next) => {
   }    
 };
 var sessionChecker = async(req, res, next) => {
+  console.log("******************************");
   console.log(req.originalUrl);
   if (req.session.user && req.cookies.user_sid) {
    // await dbFunct.updateLogged(req.session.user.userID,1);
@@ -79,8 +81,8 @@ var sessionChecker = async(req, res, next) => {
   }    
 };
 var sessionAdmin = (req, res, next) => {
+  console.log("******************************");
   console.log(req.originalUrl);
-  
   if (req.session.user && req.cookies.user_sid) {
     const userID=req.session.user.userID;
     if(userID==205121002||userID==205121084||userID==205121106)
@@ -162,7 +164,6 @@ app.get("/stage1/ques",sessionChecker,async(req,res)=>{
 
   const index= await dbFunct.getIndex1(userID);
   const stage1Qlist=JSON.parse(await dbFunct.getStage1QList(userID));
-  console.log(stage1Qlist);
   const question = await dbFunct.getStage1Q(stage1Qlist[index.index]);
   console.log(question);
   if(index.index>12){
