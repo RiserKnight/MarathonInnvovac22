@@ -131,6 +131,7 @@ app.get("/stage1",sessionChecker,async(req,res)=>{
   if(date.getTime()>Stage1upT&&date.getTime()<Stage1dwT){
   if(userStage===1){
   const visit=await dbFunct.getIndex1(userID);
+
   if(visit.visit==0&&visit.index<13){
   const stage1Qlist = await qFunct.stage1Qlist();
   await dbFunct.storeStage1QList(userID,JSON.stringify(stage1Qlist));
@@ -142,6 +143,8 @@ app.get("/stage1",sessionChecker,async(req,res)=>{
   else
   res.render("invalid");
   }
+
+
   else if(date.getTime()<Stage1upT)
   res.render("beforeTime",{up:Stage1upT,text:"Stage 1"})
   else
@@ -156,9 +159,12 @@ app.get("/stage1/ques",sessionChecker,async(req,res)=>{
   const Stage1dwT=await dbFunct.getStageTimeStampS(3002);
 
   if(date.getTime()>Stage1upT&&date.getTime()<Stage1dwT&&userStage===1){
+
   const index= await dbFunct.getIndex1(userID);
   const stage1Qlist=JSON.parse(await dbFunct.getStage1QList(userID));
+  console.log(stage1Qlist);
   const question = await dbFunct.getStage1Q(stage1Qlist[index.index]);
+  console.log(question);
   if(index.index>12){
     await dbFunct.updateUserStage(userID,2);
     res.render("Stage1/end")
@@ -171,6 +177,7 @@ app.get("/stage1/ques",sessionChecker,async(req,res)=>{
   });
 
   app.post("/stage1/ques/submit/:qID",sessionChecker,async(req,res)=>{
+    console.log("Submit qID: "+req.params.qID);
     const userID=req.session.user.userID;
    let ans=req.body.answer;
    ans= _.trim(ans, '_- ');
