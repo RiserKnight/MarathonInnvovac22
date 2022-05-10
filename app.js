@@ -92,7 +92,6 @@ var sessionAdmin = (req, res, next) => {
   }    
 };
 
-let stage1Qlist=[1];
 
 app.get('/',sessionChecker, (req, res) => {
   res.redirect("/home");
@@ -129,15 +128,19 @@ app.get("/stage1",sessionChecker,async(req,res)=>{
   console.log("Stage 1 Down Time: "+dw);
 
   const date = new Date();
-  if(date.getTime()>Stage1upT&&date.getTime()<Stage1dwT&&userStage===1){
-  stage1Qlist = await qFunct.stage1Qlist();
-  console.log("There should not be any space - _ between letters");
+  if(date.getTime()>Stage1upT&&date.getTime()<Stage1dwT){
+  if(userStage===1){
   const visit=await dbFunct.getIndex1(userID);
   if(visit.visit==0&&visit.index<13){
+  const stage1Qlist = await qFunct.stage1Qlist();
+  await dbFunct.storeStage1QList(userID,JSON.stringify(stage1Qlist));
   await dbFunct.updateVisit1(userID,1);
   res.render("Stage1/stage");}
   else
   res.redirect("/stage1/ques");
+  }
+  else
+  res.render("invalid");
   }
   else if(date.getTime()<Stage1upT)
   res.render("beforeTime",{up:Stage1upT,text:"Stage 1"})
@@ -154,6 +157,7 @@ app.get("/stage1/ques",sessionChecker,async(req,res)=>{
 
   if(date.getTime()>Stage1upT&&date.getTime()<Stage1dwT&&userStage===1){
   const index= await dbFunct.getIndex1(userID);
+  const stage1Qlist=JSON.parse(await dbFunct.getStage1QList(userID));
   const question = await dbFunct.getStage1Q(stage1Qlist[index.index]);
   if(index.index>12){
     await dbFunct.updateUserStage(userID,2);
@@ -199,7 +203,8 @@ app.get("/stage2",sessionChecker,async(req,res)=>{
   console.log("Stage 2 Down Time: "+dw);
 
   const date = new Date();
-  if(date.getTime()>Stage2upT&&date.getTime()<Stage2dwT&&userStage===2){
+  if(date.getTime()>Stage2upT&&date.getTime()<Stage2dwT){
+  if(userStage===2){
   const visit=await dbFunct.getIndex2(userID);
   if(visit.visit==0&&visit.index<11){
   const stage2Qlist = await qFunct.stage2Qlist();
@@ -208,6 +213,9 @@ app.get("/stage2",sessionChecker,async(req,res)=>{
   res.render("Stage2/Stage");}
   else
   res.redirect("/stage2/ques");
+  }
+  else
+  res.render("invalid");
   }
   else if(date.getTime()<Stage2upT)
   res.render("beforeTime",{up:Stage2upT,text:"Stage 2"})

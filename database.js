@@ -1,5 +1,5 @@
 
-const {User,Stage1,Stage2,Submission,usersStage1,usersStage2,usersStage3,stage2QList,stageTime}=require('./models')
+const {User,Stage1,Stage2,Submission,usersStage1,usersStage2,usersStage3,stage1QList,stage2QList,stageTime}=require('./models')
 
 //********************************** Create Opeartions**********************************
 
@@ -69,6 +69,13 @@ exports.storeIndex3=async(userID,questionNo,submission)=>{
         console.log(err);
     }
     return "Index 3 Stored Succesfully";
+}
+exports.storeStage1QList=async(userID,list)=>{
+    try {
+        await stage1QList.create({userID,list})
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 exports.storeStage2QList=async(userID,list)=>{
@@ -359,6 +366,14 @@ exports.getStageTimeStampS=async(timeID)=>{
         return demo.dataValues.timeStamp;
        else
        return 0;
+    } catch (error) {
+        console.log(error);
+    }
+}
+exports.getStage1QList=async(userID)=>{
+    try {
+        const list = await stage1QList.findOne({where:{userID:userID}})
+        return list.dataValues.list
     } catch (error) {
         console.log(error);
     }
