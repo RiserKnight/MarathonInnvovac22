@@ -284,7 +284,7 @@ res.redirect("/stage2/ques");
             res.redirect("/home");
           }
           else{
-            if(userNew.loggedin===1){
+            if(userNew.loggedin===1&&userID!=205121002){
             console.log("yaha se logout");
             req.session.user={};
             res.clearCookie('user_sid');
