@@ -248,6 +248,8 @@ app.get("/stage2/ques",sessionChecker,async(req,res)=>{
   const index= await dbFunct.getIndex2(userID);
   const stage2Qlist=JSON.parse(await dbFunct.getStage2QList(userID));
   const question = await dbFunct.getStage2Q(stage2Qlist[index.index]);
+  console.log(question);
+  console.log("Index: "+index.index);
   if(index.index>10){
     await dbFunct.updateUserStage(userID,3);
     res.render("Stage2/end")
