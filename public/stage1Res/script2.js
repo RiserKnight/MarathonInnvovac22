@@ -9,7 +9,16 @@ const waitCount = document.querySelector(".timer .wait_sec");
 submitBtn.addEventListener("click", function(event){
     event.preventDefault()
   });
-
+  var ansSubmit = (function() {
+    var executed = false;
+    return function() {
+        if (!executed) {
+            executed = true;
+            clearTimeout(timeoutObj);
+            document.getElementById("stage1ques").submit(); 
+        }
+    };
+})();
 // if continueQuiz button clicked
 window.onload = ()=>{
     
@@ -36,10 +45,11 @@ let widthValue = 0;
 
 const bottom_ques_counter = document.querySelector("footer .total_que");
 
+/*
 function ansSubmit(){
 clearTimeout(timeoutObj);
 document.getElementById("stage1ques").submit(); 
-}
+}*/
 function startTimer(time){
     counter = setInterval(timer, 1000);
     function timer(){

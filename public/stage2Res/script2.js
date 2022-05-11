@@ -9,12 +9,25 @@ const option2=document.getElementById("option2");
 const option3=document.getElementById("option3");
 const option4=document.getElementById("option4");
 const user_ans=document.getElementById("user_ans");
+
+var ansSubmit = (function() {
+    var executed = false;
+    return function() {
+        if (!executed) {
+            executed = true;
+            clearTimeout(timeoutObj);
+            document.getElementById("stage2ques").submit();
+        }
+    };
+})();
+
 // if continueQuiz button clicked
 window.onload = ()=>{
     
     quiz_box.classList.add("activeQuiz"); //show quiz box
     startTimer(30); //calling startTimer function
-    startTimerLine(0); //calling startTimerLine function
+ //   startTimerLine(0); //calling startTimerLine function
+ timeoutObj = setTimeout(ansSubmit, 30000);
 }
 
 let timeValue =  30;
@@ -33,6 +46,7 @@ option3.onclick=()=>{addSelection(option3);}
 option4.onclick=()=>{addSelection(option4);}
 
 
+
 function startTimer(time){
     counter = setInterval(timer, 1000);
     function timer(){
@@ -48,7 +62,7 @@ function startTimer(time){
         
                     console.log("Time Off: Auto selected correct answer.");
               
-            document.getElementById("stage2ques").submit();  //show the next button if user selected any option
+        //show the next button if user selected any option
         }
     }
 }

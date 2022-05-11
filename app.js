@@ -232,7 +232,6 @@ app.get("/stage2",sessionChecker,async(req,res)=>{
   });
 
 app.get("/stage2/ques",sessionChecker,async(req,res)=>{
-  await sleep(2000);
   const userID=req.session.user.userID;
   const userStage= await dbFunct.getUserCurrStage(userID);
   const date = new Date();
