@@ -232,6 +232,7 @@ app.get("/stage2",sessionChecker,async(req,res)=>{
   });
 
 app.get("/stage2/ques",sessionChecker,async(req,res)=>{
+  await sleep(2000);
   const userID=req.session.user.userID;
   const userStage= await dbFunct.getUserCurrStage(userID);
   const date = new Date();
@@ -558,6 +559,7 @@ res.render("admin");
     await dbFunct.delStage1QList(userID);
     await dbFunct.delStage2QList(userID);
     await dbFunct.delStage3Submission(userID);
+    await dbFunct.delSubmission(userID);
     const users= await dbFunct.getAllUsers();
     res.render("userTable",{users:users});
    }

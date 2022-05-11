@@ -15,8 +15,8 @@ window.onload = ()=>{
     
     quiz_box.classList.add("activeQuiz"); //show quiz box
     startTimer(90); //calling startTimer function
-    startTimerLine(0); //calling startTimerLine function
-    timeout = setTimeout(ansSubmit, 90000);
+  //  startTimerLine(0); //calling startTimerLine function
+    timeoutObj = setTimeout(ansSubmit, 90000);
 }
 
 submitBtn.onclick=()=>{
@@ -37,7 +37,8 @@ let widthValue = 0;
 const bottom_ques_counter = document.querySelector("footer .total_que");
 
 function ansSubmit(){
-document.getElementById("stage1ques").submit();    
+clearTimeout(timeoutObj);
+document.getElementById("stage1ques").submit(); 
 }
 function startTimer(time){
     counter = setInterval(timer, 1000);
@@ -56,8 +57,8 @@ function startTimer(time){
     }
 }
 function startTimer1(time){
-    counter = setInterval(timer, 1000);
-    function timer(){
+    counter = setInterval(timer1, 1000);
+    function timer1(){
         waitCount.textContent = time; //changing the value of timeCount with time value
         time--; //decrement the time value
         if(time < 9){ //if timer is less than 9
