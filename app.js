@@ -55,6 +55,11 @@ app.use((req, res, next) => {
   next();
 });
 
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
 
 
 // middleware function to check for logged-in users
@@ -154,6 +159,7 @@ app.get("/stage1",sessionChecker,async(req,res)=>{
   });
 
 app.get("/stage1/ques",sessionChecker,async(req,res)=>{
+  await sleep(2000);
   const userID=req.session.user.userID;
   const userStage= await dbFunct.getUserCurrStage(userID);
   const date = new Date();
@@ -232,6 +238,7 @@ app.get("/stage2",sessionChecker,async(req,res)=>{
   });
 
 app.get("/stage2/ques",sessionChecker,async(req,res)=>{
+  await sleep(2000);
   const userID=req.session.user.userID;
   const userStage= await dbFunct.getUserCurrStage(userID);
   const date = new Date();
@@ -645,6 +652,16 @@ res.render("admin");
      });
      res.render("submissionTable",{submissions:submissions});
    }
+   if(btID==20)
+   {
+     let submissions=[];
+     userID=parseInt(req.body.userID);
+     const submissionsRaw= await dbFunct.getAllSubmissionU(userID);
+     submissionsRaw.forEach((question)=>{
+      submissions.push(question.dataValues);
+     });
+     res.render("submissionTable",{submissions:submissions});
+   }
 
    
       });
@@ -758,7 +775,7 @@ console.log(eventD.getTime())*/
     await dbFunct.storeStageTimeStamp(3001,"Stage 1 Up Time",1652272200000);
     await dbFunct.storeStageTimeStamp(3002,"Stage 1 Down Time",1652274000000);
     await dbFunct.storeStageTimeStamp(3003,"Stage 2 Up Time",1652275800000);
-    await dbFunct.storeStageTimeStamp(3004,"Stage 2 Down Time",1652277600000);
+    await dbFunct.storeStageTimeStamp(3004,"Stage 2 Down Time",1652275800000);
     await dbFunct.storeStageTimeStamp(3005,"Stage 3 Up Time",1652340600000);
     await dbFunct.storeStageTimeStamp(3006,"Stage 3 Down Time",1652351400000);
     await dbFunct.storeStageTimeStamp(3007,"LeaderBoard Up Time",1652293800000);

@@ -277,6 +277,17 @@ exports.getAllSubmissionQ=async(qID)=>{
         console.log(err);
             }
 }
+exports.getAllSubmissionU=async(userID)=>{
+
+    try{
+     const demo=await Submission.findAll({where:{userID:userID}});
+   
+     return demo;
+    }
+    catch(err){
+        console.log(err);
+            }
+}
 exports.getUsersStage1=async()=>{
     let users=[];
     try{
