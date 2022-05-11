@@ -774,13 +774,13 @@ Remember to subtract 5 hours and 30 minutes
 const eventD = new Date(2022,4,8,4,30,0);
 eventD.setMilliseconds(0);
 console.log(eventD.getTime())*/
-    await dbFunct.storeStageTimeStamp(3001,"Stage 1 Up Time",1652272200000);
+    await dbFunct.storeStageTimeStamp(3001,"Stage 1 Up Time",  1652272200000);
     await dbFunct.storeStageTimeStamp(3002,"Stage 1 Down Time",1652274000000);
-    await dbFunct.storeStageTimeStamp(3003,"Stage 2 Up Time",1652275800000);
-    await dbFunct.storeStageTimeStamp(3004,"Stage 2 Down Time",1652275800000);
-    await dbFunct.storeStageTimeStamp(3005,"Stage 3 Up Time",1652340600000);
-    await dbFunct.storeStageTimeStamp(3006,"Stage 3 Down Time",1652351400000);
-    await dbFunct.storeStageTimeStamp(3007,"LeaderBoard Up Time",1652293800000);
+    await dbFunct.storeStageTimeStamp(3003,"Stage 2 Up Time",  1652275800000);
+    await dbFunct.storeStageTimeStamp(3004,"Stage 2 Down Time",1652276700000);
+    await dbFunct.storeStageTimeStamp(3005,"Stage 3 Up Time",  1652344200000);
+    await dbFunct.storeStageTimeStamp(3006,"Stage 3 Down Time",1652353200000);
+    await dbFunct.storeStageTimeStamp(3007,"LeaderBoard Up Time",  1652293800000);
     await dbFunct.storeStageTimeStamp(3008,"LeaderBoard Down Time",1654972200000);
     }
 });
