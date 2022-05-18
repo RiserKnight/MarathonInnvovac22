@@ -27,7 +27,7 @@ window.onload = ()=>{
     quiz_box.classList.add("activeQuiz"); //show quiz box
     startTimer(30); //calling startTimer function
  //   startTimerLine(0); //calling startTimerLine function
- timeoutObj = setTimeout(ansSubmit, 30000);
+ timeoutObj = setTimeout(ansSubmit,30000);
 }
 
 let timeValue =  30;
@@ -59,24 +59,14 @@ function startTimer(time){
         if(time < 0){ //if timer is less than 0
             clearInterval(counter); //clear counter
             timeText.textContent = "Time Off"; //change the time text to time off
-        
-                    console.log("Time Off: Auto selected correct answer.");
+            console.log("Time Off: Auto selected correct answer.");
               
         //show the next button if user selected any option
         }
     }
 }
 
-function startTimerLine(time){
-    counterLine = setInterval(timer, 56);
-    function timer(){
-        time += 1; //upgrading time value with 1
-        time_line.style.width = time + "px"; //increasing width of time_line with px by time value
-        if(time > 549){ //if time value is greater than 549
-            clearInterval(counterLine); //clear counterLine
-        }
-    }
-}
+
 
 function addSelection(option){
     for(a=0;a<4;a++){

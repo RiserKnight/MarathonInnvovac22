@@ -367,6 +367,42 @@ exports.getAllIndex3=async(userID)=>{
         console.log(err);
     }
 }
+exports.getAllIndex3S=async()=>{
+    let index3=[];
+    try {
+       const demo= await usersStage3.findAll(); 
+        if(demo){
+         demo.forEach(index => {
+             index3.push(index.dataValues);
+         });
+         return index3;
+        }
+        
+        else
+        return 0;
+    } catch (error) {
+        console.log(err);
+    }
+}
+exports.getAllIndex3Q=async(questionNo)=>{
+    let index3=[];
+    try {
+       const demo= await usersStage3.findAll({
+            where:{questionNo:questionNo}
+        }); 
+        if(demo){
+         demo.forEach(index => {
+             index3.push(index.dataValues);
+         });
+         return index3;
+        }
+        
+        else
+        return 0;
+    } catch (error) {
+        console.log(err);
+    }
+}
 exports.getStageTimeStamp=async()=>{
     let timing=[];
     try {

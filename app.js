@@ -17,6 +17,7 @@ const axios = require('axios');
 const { load } = require("nodemon/lib/config");
 const _ = require('lodash');
 const { identity } = require("lodash");
+const alert = require('alert');
 
 require('dotenv').config();
 
@@ -393,6 +394,7 @@ app.post('/uploadfile/:qID', uploadMultiple, function (req, res, next) {
     var v= req.files.file2[0].path;
         console.log(req.files);
         console.log(v+ 'file uploaded successfully'); 
+
     fs.readFile(v,async function(err,data){
       data=data.toString();
       var data1=data.replace(/(\r\n|\n|\r)/gm,"");
@@ -452,8 +454,12 @@ app.post('/uploadfile/:qID', uploadMultiple, function (req, res, next) {
 
 
   const date = new Date();
-  if(date.getTime()>Stage3upT&&date.getTime()<Stage3dwT&&userStage===3){
+  if(date.getTime()>Stage3upT&&date.getTime()<Stage3dwT){
+   if(userStage===3){
     res.sendFile(__dirname+"/views/Stage3/index1.html");
+  }
+  else
+  res.render("invalid");
   }
   else if(date.getTime()<Stage3upT)
   res.render("beforeTime",{up:Stage3upT,text:"Stage 3"})
@@ -664,7 +670,17 @@ res.render("admin");
      });
      res.render("submissionTable",{submissions:submissions});
    }
-
+   if(btID==21)
+   {
+     const submissions=await dbFunct.getAllIndex3S();
+     res.render("stage3Table",{submissions:submissions});
+   }
+   if(btID==22)
+   {
+     qID=parseInt(req.body.qID);
+     const submissions=await dbFunct.getAllIndex3Q(qID);
+     res.render("stage3Table",{submissions:submissions});
+   }
    
       });
     
@@ -713,6 +729,7 @@ app.listen(app.get('port'),async()=> {
     const quesS1 = await dbFunct.getStage1Q(1001);
     if(!quesS1){
      
+    
     await dbFunct.storeStage1Q(1001," Client, I'm your newsboy.(s----r)","server");
     await dbFunct.storeStage1Q(1002," What IT guys do on weekends.(d---d----)" ,"diskdrive");
     await dbFunct.storeStage1Q(1003," Computer spectacles enhances what.(w--s----)" ,"websight");
@@ -729,6 +746,7 @@ app.listen(app.get('port'),async()=> {
     
     const quesS2 = await dbFunct.getStage2Q(2001);
     if(!quesS2){
+      
       await dbFunct.storeStage2Q(2001,"Where is the BIOS stored?", "Hard Disk", "RAM", "Flash Memory Chip", "Any of above", "option3");
       await dbFunct.storeStage2Q(2002, "Internet is","complex system", " decentralized system", "dynamic system", "All of above", "option4");
       await dbFunct.storeStage2Q(2003, "Use of Telnet","Remote login", "connecting to TV", "transferring files across net", "All of above", "option1");
